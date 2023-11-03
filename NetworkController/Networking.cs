@@ -7,6 +7,18 @@ namespace NetworkUtil;
 
 public static class Networking
 {
+    class Data
+    {
+        public TcpListener listener { get; set; }
+        public Action<SocketState> toCall { get; set; }
+
+
+        public Data(Action<SocketState> action, TcpListener listener)
+        {
+            this.listener = listener;
+            this.toCall = action;
+        }
+    }
     /////////////////////////////////////////////////////////////////////////////////////////
     // Server-Side Code
     /////////////////////////////////////////////////////////////////////////////////////////
@@ -20,7 +32,11 @@ public static class Networking
     /// <param name="port">The the port to listen on</param>
     public static TcpListener StartServer(Action<SocketState> toCall, int port)
     {
-        throw new NotImplementedException();
+        TcpListener listener = new TcpListener(IPAddress.Any, port);
+        listener.Start();
+        listener.BeginAcceptSocket(AcceptNewClient, new Data(toCall, listener));
+        
+        return listener;
     }
 
     /// <summary>
@@ -43,7 +59,16 @@ public static class Networking
     /// 1) a delegate so the user can take action (a SocketState Action), and 2) the TcpListener</param>
     private static void AcceptNewClient(IAsyncResult ar)
     {
-        throw new NotImplementedException();
+        TcpListener listener = ((Data)ar.AsyncState!).listener;
+        Action<SocketState> toCall = ((Data)ar.AsyncState!).toCall;
+
+        Socket newClient = listener.EndAcceptSocket(ar);
+
+        SocketState socketState = new SocketState(toCall, newClient);
+        toCall(socketState);
+
+        listener.BeginAcceptSocket(AcceptNewClient, (Data)ar.AsyncState); // Loop back to beginning
+        
     }
 
     /// <summary>
@@ -51,7 +76,7 @@ public static class Networking
     /// </summary>
     public static void StopServer(TcpListener listener)
     {
-        throw new NotImplementedException();
+        listener.Stop();
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////
@@ -79,6 +104,8 @@ public static class Networking
         // TODO: This method is incomplete, but contains a starting point 
         //       for decoding a host address
 
+        SocketState socketState;
+
         // Establish the remote endpoint for the socket.
         IPHostEntry ipHostInfo;
         IPAddress ipAddress = IPAddress.None;
@@ -98,7 +125,8 @@ public static class Networking
             // Didn't find any IPV4 addresses
             if (!foundIPV4)
             {
-                // TODO: Indicate an error to the user, as specified in the documentation
+                socketState = new SocketState(toCall, "Didn't find any IPV4 addresses");
+                toCall(socketState);
             }
         }
         catch (Exception)
@@ -111,6 +139,8 @@ public static class Networking
             catch (Exception)
             {
                 // TODO: Indicate an error to the user, as specified in the documentation
+                socketState = new SocketState(toCall, "Host name is not a valid ipaddress");
+                toCall(socketState);
             }
         }
 
@@ -122,7 +152,9 @@ public static class Networking
         // game like ours will be 
         socket.NoDelay = true;
 
-        // TODO: Finish the remainder of the connection process as specified.
+        socketState = new SocketState(toCall, socket);
+
+        socketState.TheSocket.BeginConnect(ipAddress, port, ConnectedCallback, socketState);
     }
 
     /// <summary>
@@ -140,7 +172,10 @@ public static class Networking
     /// <param name="ar">The object asynchronously passed via BeginConnect</param>
     private static void ConnectedCallback(IAsyncResult ar)
     {
-        throw new NotImplementedException();
+        SocketState state = (SocketState) ar.AsyncState!;
+        state.TheSocket.EndConnect(ar);
+
+        state.OnNetworkAction(new SocketState(state.OnNetworkAction, state.TheSocket)); // Why are we creating a new socket state????
     }
 
 
@@ -161,7 +196,7 @@ public static class Networking
     /// <param name="state">The SocketState to begin receiving</param>
     public static void GetData(SocketState state)
     {
-        throw new NotImplementedException();
+        state.TheSocket.BeginReceive(state.buffer, 0, state.buffer.Length, SocketFlags.None, ReceiveCallback, state);
     }
 
     /// <summary>
@@ -183,7 +218,17 @@ public static class Networking
     /// </param>
     private static void ReceiveCallback(IAsyncResult ar)
     {
-        throw new NotImplementedException();
+        SocketState state = (SocketState)(ar.AsyncState!);
+        int numBytes = state.TheSocket.EndReceive(ar);
+
+        string message = Encoding.UTF8.GetString(state.buffer, 0, numBytes);
+        lock (state.data)
+        { 
+            state.data.Append(message);
+        }
+
+        state.TheSocket.BeginReceive(state.buffer, 0, state.buffer.Length, SocketFlags.None, ReceiveCallback, state);
+
     }
 
     /// <summary>
@@ -198,7 +243,13 @@ public static class Networking
     /// <returns>True if the send process was started, false if an error occurs or the socket is already closed</returns>
     public static bool Send(Socket socket, string data)
     {
-        throw new NotImplementedException();
+        if(socket.Connected)
+        {
+            byte[] messageBytes = Encoding.UTF8.GetBytes(data);
+            socket.BeginSend(messageBytes, 0, messageBytes.Length, SocketFlags.None, SendCallback, socket);
+            return true;
+        }
+        return false;
     }
 
     /// <summary>
@@ -214,7 +265,8 @@ public static class Networking
     /// </param>
     private static void SendCallback(IAsyncResult ar)
     {
-        throw new NotImplementedException();
+        Socket s = (Socket)ar.AsyncState!;
+        s.EndSend(ar);
     }
 
 
@@ -231,7 +283,13 @@ public static class Networking
     /// <returns>True if the send process was started, false if an error occurs or the socket is already closed</returns>
     public static bool SendAndClose(Socket socket, string data)
     {
-        throw new NotImplementedException();
+        if (socket.Connected)
+        {
+            byte[] messageBytes = Encoding.UTF8.GetBytes(data);
+            socket.BeginSend(messageBytes, 0, messageBytes.Length, SocketFlags.None, SendAndCloseCallback, socket);
+            return true;
+        }
+        return false;
     }
 
     /// <summary>
@@ -249,6 +307,8 @@ public static class Networking
     /// </param>
     private static void SendAndCloseCallback(IAsyncResult ar)
     {
-        throw new NotImplementedException();
+        Socket s = (Socket)ar.AsyncState!;
+        s.EndSend(ar);
+        s.Close();
     }
 }
