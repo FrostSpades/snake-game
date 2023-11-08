@@ -61,10 +61,20 @@ public static class Networking
     {
         TcpListener listener = ((Data)ar.AsyncState!).listener;
         Action<SocketState> toCall = ((Data)ar.AsyncState!).toCall;
+        SocketState socketState;
 
-        Socket newClient = listener.EndAcceptSocket(ar);
+        try
+        {
+            Socket newClient = listener.EndAcceptSocket(ar);
+            socketState = new SocketState(toCall, newClient);
+        }
+        catch
+        {
+            socketState = new SocketState(toCall, "Error when ending socket accept");
+        }
+        
 
-        SocketState socketState = new SocketState(toCall, newClient);
+        
         toCall(socketState);
 
         listener.BeginAcceptSocket(AcceptNewClient, (Data)ar.AsyncState); // Loop back to beginning
@@ -219,7 +229,16 @@ public static class Networking
     private static void ReceiveCallback(IAsyncResult ar)
     {
         SocketState state = (SocketState)(ar.AsyncState!);
-        int numBytes = state.TheSocket.EndReceive(ar);
+        int numBytes = 0;
+        try
+        {
+            numBytes = state.TheSocket.EndReceive(ar);
+        }
+        catch
+        {
+
+        }
+        
 
         string message = Encoding.UTF8.GetString(state.buffer, 0, numBytes);
         lock (state.data)
