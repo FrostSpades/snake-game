@@ -3,6 +3,7 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Net.Sockets;
 using System.Text;
+using NetworkUtil;
 
 namespace NetworkUtil;
 
