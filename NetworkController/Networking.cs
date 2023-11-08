@@ -227,7 +227,9 @@ public static class Networking
             state.data.Append(message);
         }
 
-        state.TheSocket.BeginReceive(state.buffer, 0, state.buffer.Length, SocketFlags.None, ReceiveCallback, state);
+        state.OnNetworkAction(state);
+
+        //state.TheSocket.BeginReceive(state.buffer, 0, state.buffer.Length, SocketFlags.None, ReceiveCallback, state);
 
     }
 
