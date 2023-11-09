@@ -289,6 +289,7 @@ public static class Networking
             state.ErrorMessage = "Begin Receive failed";
 
             state.OnNetworkAction(state);
+            return;
         }
 
         string message = Encoding.UTF8.GetString(state.buffer, 0, numBytes);
