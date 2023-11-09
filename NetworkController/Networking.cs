@@ -1,11 +1,17 @@
-﻿using System;
+﻿//Authors: Mary Garfield and Ethan Andrews
+// Nov 9th 2023
+//Networking library for sending messages between remote and local clients. 
+
+using System;
 using System.Linq.Expressions;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
 
 namespace NetworkUtil;
-
+/// <summary>
+/// Static class that incorporates send and receive data between remote and local clients. 
+/// </summary>
 public static class Networking
 {
     /////////////////////////////////////////////////////////////////////////////////////////
@@ -23,7 +29,7 @@ public static class Networking
     {
         TcpListener listener = new TcpListener(IPAddress.Any, port);
         listener.Start();
-
+        //catches expections from the BeginAcceptSocket method.
         try
         {
             listener.BeginAcceptSocket(AcceptNewClient, (toCall, listener));
@@ -55,10 +61,11 @@ public static class Networking
     /// 1) a delegate so the user can take action (a SocketState Action), and 2) the TcpListener</param>
     private static void AcceptNewClient(IAsyncResult ar)
     {
+        //extract data from the passed in async object. 
         TcpListener listener = (((Action<SocketState>, TcpListener))ar.AsyncState!).Item2;
         Action<SocketState> toCall = (((Action<SocketState>, TcpListener))ar.AsyncState!).Item1;
         SocketState socketState;
-
+        //if an accept throws an error then trigger toCall method with new socket state with error. 
         try
         {
             Socket newClient = listener.EndAcceptSocket(ar);
@@ -74,7 +81,7 @@ public static class Networking
 
         
         toCall(socketState);
-
+        //catches errors thrown by BeginAcceptSocket method. 
         try
         {
             listener.BeginAcceptSocket(AcceptNewClient, ((Action<SocketState>, TcpListener))ar.AsyncState); // Loop back to beginning
@@ -160,7 +167,6 @@ public static class Networking
             }
             catch (Exception)
             {
-                // TODO: Indicate an error to the user, as specified in the documentation
                 socketState = new SocketState(toCall, "Host name is not a valid ipaddress");
                 toCall(socketState);
                 return;
@@ -176,7 +182,7 @@ public static class Networking
         socket.NoDelay = true;
 
         socketState = new SocketState(toCall, socket);
-
+        //Triggers an error if BeginConnect takes longer than three seconds. 
         try
         {
             IAsyncResult result = socketState.TheSocket.BeginConnect(ipAddress, port, ConnectedCallback, socketState);
@@ -211,6 +217,7 @@ public static class Networking
     private static void ConnectedCallback(IAsyncResult ar)
     {
         SocketState state = (SocketState) ar.AsyncState!;
+        //If EndConnect throws error set socket state to error and trigger OnNetworkAction. 
         try
         {
             state.TheSocket.EndConnect(ar);
@@ -277,7 +284,7 @@ public static class Networking
     {
         SocketState state = (SocketState)(ar.AsyncState!);
         int numBytes = 0;
-        
+        //If EndRecieve fails trigger OnNetworkAction with error set to true. 
         try
         {
             numBytes = state.TheSocket.EndReceive(ar);
@@ -291,7 +298,7 @@ public static class Networking
             state.OnNetworkAction(state);
             return;
         }
-
+        //Decode message and give it to the state. 
         string message = Encoding.UTF8.GetString(state.buffer, 0, numBytes);
         lock (state.data)
         { 
@@ -316,7 +323,9 @@ public static class Networking
     {
         if(socket.Connected)
         {
+            //Get the data 
             byte[] messageBytes = Encoding.UTF8.GetBytes(data);
+            //If send fails close the socket and return false. 
             try
             {
                 socket.BeginSend(messageBytes, 0, messageBytes.Length, SocketFlags.None, SendCallback, socket);
@@ -384,7 +393,9 @@ public static class Networking
     {
         if (socket.Connected)
         {
+            //Get data. 
             byte[] messageBytes = Encoding.UTF8.GetBytes(data);
+            //If send fails close the socket and return false. 
             try
             {
                 socket.BeginSend(messageBytes, 0, messageBytes.Length, SocketFlags.None, SendAndCloseCallback, socket);
@@ -436,9 +447,13 @@ public static class Networking
         {
 
         }
+        //Makes sure the socket is closed. 
         try
         {
-            s.Close();
+            if (s.Connected)
+            {
+                s.Close();
+            }
         }
         catch
         {
