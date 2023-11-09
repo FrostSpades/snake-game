@@ -5,9 +5,9 @@ VisualStudioVersion = 17.7.34018.315
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NetworkController", "NetworkController\NetworkController.csproj", "{6AC4FEC8-D586-4072-833A-BA23EB109756}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NetworkTestHelper", "NetworkTestHelper\NetworkTestHelper.csproj", "{4BCA981A-EAD6-4740-8CD8-BC38E8FF90C3}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NetworkTestHelper", "NetworkTestHelper\NetworkTestHelper.csproj", "{4BCA981A-EAD6-4740-8CD8-BC38E8FF90C3}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NetworkTests", "NetworkTests\NetworkTests.csproj", "{C1FA33BE-4780-49FB-BBC8-E286780A5586}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NetworkTests", "NetworkTests\NetworkTests.csproj", "{C1FA33BE-4780-49FB-BBC8-E286780A5586}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
