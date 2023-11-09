@@ -7,6 +7,9 @@ namespace NetworkUtil;
 
 public static class Networking
 {
+    /// <summary>
+    ///  CANT FUCKING USE THIS
+    /// </summary>
     class Data
     {
         public TcpListener listener { get; set; }
@@ -34,7 +37,16 @@ public static class Networking
     {
         TcpListener listener = new TcpListener(IPAddress.Any, port);
         listener.Start();
-        listener.BeginAcceptSocket(AcceptNewClient, new Data(toCall, listener));
+
+        try
+        {
+            listener.BeginAcceptSocket(AcceptNewClient, new Data(toCall, listener));
+        }
+        catch
+        {
+
+        }
+        
         
         return listener;
     }
@@ -77,7 +89,15 @@ public static class Networking
         
         toCall(socketState);
 
-        listener.BeginAcceptSocket(AcceptNewClient, (Data)ar.AsyncState); // Loop back to beginning
+        try
+        {
+            listener.BeginAcceptSocket(AcceptNewClient, (Data)ar.AsyncState); // Loop back to beginning
+        }
+        catch
+        {
+
+        }
+        
         
     }
 
@@ -164,7 +184,22 @@ public static class Networking
 
         socketState = new SocketState(toCall, socket);
 
-        socketState.TheSocket.BeginConnect(ipAddress, port, ConnectedCallback, socketState);
+        try
+        {
+            IAsyncResult result = socketState.TheSocket.BeginConnect(ipAddress, port, ConnectedCallback, socketState);
+            bool working = result.AsyncWaitHandle.WaitOne(3000, true);
+
+            if (!working)
+            {
+                socketState = new SocketState(toCall, "Connection Timed Out");
+                toCall(socketState);
+            }
+        }
+        catch
+        {
+
+        }
+        
     }
 
     /// <summary>
@@ -183,9 +218,25 @@ public static class Networking
     private static void ConnectedCallback(IAsyncResult ar)
     {
         SocketState state = (SocketState) ar.AsyncState!;
-        state.TheSocket.EndConnect(ar);
+        try
+        {
+            state.TheSocket.EndConnect(ar);
+        }
+        catch
+        {
 
-        state.OnNetworkAction(new SocketState(state.OnNetworkAction, state.TheSocket)); // Why are we creating a new socket state????
+        }
+        
+
+        try
+        {
+            state.OnNetworkAction(new SocketState(state.OnNetworkAction, state.TheSocket)); // Why are we creating a new socket state????
+        }
+        catch
+        {
+
+        }
+        
     }
 
 
@@ -206,7 +257,15 @@ public static class Networking
     /// <param name="state">The SocketState to begin receiving</param>
     public static void GetData(SocketState state)
     {
-        state.TheSocket.BeginReceive(state.buffer, 0, state.buffer.Length, SocketFlags.None, ReceiveCallback, state);
+        try
+        {
+            state.TheSocket.BeginReceive(state.buffer, 0, state.buffer.Length, SocketFlags.None, ReceiveCallback, state);
+        }
+        catch
+        {
+
+        }
+        
     }
 
     /// <summary>
@@ -248,8 +307,6 @@ public static class Networking
 
         state.OnNetworkAction(state);
 
-        //state.TheSocket.BeginReceive(state.buffer, 0, state.buffer.Length, SocketFlags.None, ReceiveCallback, state);
-
     }
 
     /// <summary>
@@ -287,7 +344,15 @@ public static class Networking
     private static void SendCallback(IAsyncResult ar)
     {
         Socket s = (Socket)ar.AsyncState!;
-        s.EndSend(ar);
+        try
+        {
+            s.EndSend(ar);
+        }
+        catch
+        {
+
+        }
+        
     }
 
 
@@ -329,7 +394,22 @@ public static class Networking
     private static void SendAndCloseCallback(IAsyncResult ar)
     {
         Socket s = (Socket)ar.AsyncState!;
-        s.EndSend(ar);
-        s.Close();
+        try
+        {
+            s.EndSend(ar);
+        }
+        catch
+        {
+
+        }
+        try
+        {
+            s.Close();
+        }
+        catch
+        {
+
+        }
+        
     }
 }
