@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq.Expressions;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
@@ -7,21 +8,6 @@ namespace NetworkUtil;
 
 public static class Networking
 {
-    /// <summary>
-    ///  CANT FUCKING USE THIS
-    /// </summary>
-    class Data
-    {
-        public TcpListener listener { get; set; }
-        public Action<SocketState> toCall { get; set; }
-
-
-        public Data(Action<SocketState> action, TcpListener listener)
-        {
-            this.listener = listener;
-            this.toCall = action;
-        }
-    }
     /////////////////////////////////////////////////////////////////////////////////////////
     // Server-Side Code
     /////////////////////////////////////////////////////////////////////////////////////////
@@ -40,12 +26,10 @@ public static class Networking
 
         try
         {
-            listener.BeginAcceptSocket(AcceptNewClient, new Data(toCall, listener));
+            listener.BeginAcceptSocket(AcceptNewClient, (toCall, listener));
         }
         catch
-        {
-
-        }
+        {}
         
         
         return listener;
@@ -71,8 +55,8 @@ public static class Networking
     /// 1) a delegate so the user can take action (a SocketState Action), and 2) the TcpListener</param>
     private static void AcceptNewClient(IAsyncResult ar)
     {
-        TcpListener listener = ((Data)ar.AsyncState!).listener;
-        Action<SocketState> toCall = ((Data)ar.AsyncState!).toCall;
+        TcpListener listener = (((Action<SocketState>, TcpListener))ar.AsyncState!).Item2;
+        Action<SocketState> toCall = (((Action<SocketState>, TcpListener))ar.AsyncState!).Item1;
         SocketState socketState;
 
         try
@@ -83,6 +67,8 @@ public static class Networking
         catch
         {
             socketState = new SocketState(toCall, "Error when ending socket accept");
+            toCall(socketState);
+            return;
         }
         
 
@@ -91,12 +77,10 @@ public static class Networking
 
         try
         {
-            listener.BeginAcceptSocket(AcceptNewClient, (Data)ar.AsyncState); // Loop back to beginning
+            listener.BeginAcceptSocket(AcceptNewClient, ((Action<SocketState>, TcpListener))ar.AsyncState); // Loop back to beginning
         }
         catch
-        {
-
-        }
+        {}
         
         
     }
@@ -106,7 +90,14 @@ public static class Networking
     /// </summary>
     public static void StopServer(TcpListener listener)
     {
-        listener.Stop();
+        try
+        {
+            listener.Stop();
+        }
+        catch
+        {
+
+        }
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////
@@ -157,6 +148,7 @@ public static class Networking
             {
                 socketState = new SocketState(toCall, "Didn't find any IPV4 addresses");
                 toCall(socketState);
+                return;
             }
         }
         catch (Exception)
@@ -171,6 +163,7 @@ public static class Networking
                 // TODO: Indicate an error to the user, as specified in the documentation
                 socketState = new SocketState(toCall, "Host name is not a valid ipaddress");
                 toCall(socketState);
+                return;
             }
         }
 
@@ -193,11 +186,11 @@ public static class Networking
             {
                 socketState = new SocketState(toCall, "Connection Timed Out");
                 toCall(socketState);
+                return;
             }
         }
         catch
         {
-
         }
         
     }
@@ -224,19 +217,14 @@ public static class Networking
         }
         catch
         {
-
+            state.ErrorOccurred = true;
+            state.ErrorMessage = "Endconnect Failed";
+            state.OnNetworkAction(state);
+            return;
         }
         
 
-        try
-        {
-            state.OnNetworkAction(new SocketState(state.OnNetworkAction, state.TheSocket)); // Why are we creating a new socket state????
-        }
-        catch
-        {
-
-        }
-        
+        state.OnNetworkAction(new SocketState(state.OnNetworkAction, state.TheSocket));
     }
 
 
@@ -263,7 +251,7 @@ public static class Networking
         }
         catch
         {
-
+            
         }
         
     }
@@ -289,15 +277,19 @@ public static class Networking
     {
         SocketState state = (SocketState)(ar.AsyncState!);
         int numBytes = 0;
+        
         try
         {
             numBytes = state.TheSocket.EndReceive(ar);
         }
-        catch
-        {
-
-        }
         
+        catch 
+        {
+            state.ErrorOccurred = true;
+            state.ErrorMessage = "Begin Receive failed";
+
+            state.OnNetworkAction(state);
+        }
 
         string message = Encoding.UTF8.GetString(state.buffer, 0, numBytes);
         lock (state.data)
@@ -324,7 +316,27 @@ public static class Networking
         if(socket.Connected)
         {
             byte[] messageBytes = Encoding.UTF8.GetBytes(data);
-            socket.BeginSend(messageBytes, 0, messageBytes.Length, SocketFlags.None, SendCallback, socket);
+            try
+            {
+                socket.BeginSend(messageBytes, 0, messageBytes.Length, SocketFlags.None, SendCallback, socket);
+            }
+            catch
+            {
+                // Prevents potential race condition where socket gets closed after if statement is run.
+                try
+                {
+                    if (socket.Connected)
+                    {
+                        socket.Close();
+                    }
+                }
+                catch
+                {
+
+                }
+                
+                return false;
+            }
             return true;
         }
         return false;
@@ -372,7 +384,28 @@ public static class Networking
         if (socket.Connected)
         {
             byte[] messageBytes = Encoding.UTF8.GetBytes(data);
-            socket.BeginSend(messageBytes, 0, messageBytes.Length, SocketFlags.None, SendAndCloseCallback, socket);
+            try
+            {
+                socket.BeginSend(messageBytes, 0, messageBytes.Length, SocketFlags.None, SendAndCloseCallback, socket);
+            }
+            catch
+            {
+                // Prevents potential race condition where socket gets closed after if statement is run.
+                try
+                {
+                    if (socket.Connected)
+                    {
+                        socket.Close();
+                    }
+                }
+                catch
+                {
+
+                }
+
+                return false;
+            }
+            
             return true;
         }
         return false;
