@@ -1,9 +1,14 @@
 ﻿namespace SnakeGame;
+using GameController;
+
+
 
 public partial class MainPage : ContentPage
 {
+    GameController controller;
     public MainPage()
     {
+        controller = new GameController();
         InitializeComponent();
         graphicsView.Invalidate();
     }
@@ -19,19 +24,19 @@ public partial class MainPage : ContentPage
         String text = entry.Text.ToLower();
         if (text == "w")
         {
-            // Move up
+            controller.Move("w");
         }
         else if (text == "a")
         {
-            // Move left
+            controller.Move("a");
         }
         else if (text == "s")
         {
-            // Move down
+            controller.Move("s");
         }
         else if (text == "d")
         {
-            // Move right
+            controller.Move("d");
         }
         entry.Text = "";
     }
@@ -65,7 +70,7 @@ public partial class MainPage : ContentPage
             DisplayAlert("Error", "Name must be less than 16 characters", "OK");
             return;
         }
-        DisplayAlert("Delete this", "Code to start the controller's connecting process goes here", "OK");
+        controller.Connect(serverText.Text, nameText.Text);
 
         keyboardHack.Focus();
     }
