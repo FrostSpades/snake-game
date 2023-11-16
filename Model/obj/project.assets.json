@@ -1,30 +1,49 @@
 {
   "version": 3,
   "targets": {
-    "net7.0": {}
+    "net7.0": {
+      "Vector2D/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v7.0",
+        "compile": {
+          "bin/placeholder/Vector2D.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/Vector2D.dll": {}
+        }
+      }
+    }
   },
-  "libraries": {},
+  "libraries": {
+    "Vector2D/1.0.0": {
+      "type": "project",
+      "path": "../Vector2D/Vector2D.csproj",
+      "msbuildProject": "../Vector2D/Vector2D.csproj"
+    }
+  },
   "projectFileDependencyGroups": {
-    "net7.0": []
+    "net7.0": [
+      "Vector2D >= 1.0.0"
+    ]
   },
   "packageFolders": {
-    "C:\\Users\\mhgar\\.nuget\\packages\\": {},
+    "C:\\Users\\emand\\.nuget\\packages\\": {},
     "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\mhgar\\Source\\Repos\\game-maryfrost_game\\Model\\Model.csproj",
+      "projectUniqueName": "C:\\Users\\emand\\Source\\Repos\\game-maryfrost_game\\Model\\Model.csproj",
       "projectName": "Model",
-      "projectPath": "C:\\Users\\mhgar\\Source\\Repos\\game-maryfrost_game\\Model\\Model.csproj",
-      "packagesPath": "C:\\Users\\mhgar\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\mhgar\\Source\\Repos\\game-maryfrost_game\\Model\\obj\\",
+      "projectPath": "C:\\Users\\emand\\Source\\Repos\\game-maryfrost_game\\Model\\Model.csproj",
+      "packagesPath": "C:\\Users\\emand\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\emand\\Source\\Repos\\game-maryfrost_game\\Model\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
       ],
       "configFilePaths": [
-        "C:\\Users\\mhgar\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\emand\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
@@ -39,7 +58,11 @@
       "frameworks": {
         "net7.0": {
           "targetAlias": "net7.0",
-          "projectReferences": {}
+          "projectReferences": {
+            "C:\\Users\\emand\\Source\\Repos\\game-maryfrost_game\\Vector2D\\Vector2D.csproj": {
+              "projectPath": "C:\\Users\\emand\\Source\\Repos\\game-maryfrost_game\\Vector2D\\Vector2D.csproj"
+            }
+          }
         }
       },
       "warningProperties": {
@@ -67,7 +90,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.400\\RuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.401\\RuntimeIdentifierGraph.json"
       }
     }
   }

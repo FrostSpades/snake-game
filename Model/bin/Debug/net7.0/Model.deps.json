@@ -7,14 +7,27 @@
   "targets": {
     ".NETCoreApp,Version=v7.0": {
       "Model/1.0.0": {
+        "dependencies": {
+          "Vector2D": "1.0.0"
+        },
         "runtime": {
           "Model.dll": {}
+        }
+      },
+      "Vector2D/1.0.0": {
+        "runtime": {
+          "Vector2D.dll": {}
         }
       }
     }
   },
   "libraries": {
     "Model/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "Vector2D/1.0.0": {
       "type": "project",
       "serviceable": false,
       "sha512": ""

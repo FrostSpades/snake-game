@@ -697,6 +697,12 @@
     <AppxPackagedFile Include="C:\Users\emand\Source\Repos\game-maryfrost_game\Model\bin\Debug\net7.0\Model.dll">
       <PackagePath>Model.dll</PackagePath>
     </AppxPackagedFile>
+    <AppxPackagedFile Include="C:\Users\emand\Source\Repos\game-maryfrost_game\Vector2D\bin\Debug\net7.0\Vector2D.dll">
+      <PackagePath>Vector2D.dll</PackagePath>
+    </AppxPackagedFile>
+    <AppxPackagedFile Include="C:\Users\emand\Source\Repos\game-maryfrost_game\GameController\bin\Debug\net7.0\NetworkController.dll">
+      <PackagePath>NetworkController.dll</PackagePath>
+    </AppxPackagedFile>
     <AppxPackagedFile Include="C:\Program Files\dotnet\packs\Microsoft.Maui.Controls.Ref.win\7.0.92\ref\net7.0-windows10.0.19041\Microsoft.Maui.Controls.Compatibility.pri">
       <PackagePath>Microsoft.Maui.Controls.Compatibility.pri</PackagePath>
     </AppxPackagedFile>

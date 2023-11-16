@@ -30,3 +30,5 @@ C:\Users\mhgar\Source\Repos\game-maryfrost_game\GameController\obj\Debug\net7.0\
 C:\Users\mhgar\Source\Repos\game-maryfrost_game\GameController\obj\Debug\net7.0\refint\GameController.dll
 C:\Users\mhgar\Source\Repos\game-maryfrost_game\GameController\obj\Debug\net7.0\GameController.pdb
 C:\Users\mhgar\Source\Repos\game-maryfrost_game\GameController\obj\Debug\net7.0\ref\GameController.dll
+C:\Users\emand\Source\Repos\game-maryfrost_game\GameController\bin\Debug\net7.0\Vector2D.dll
+C:\Users\emand\Source\Repos\game-maryfrost_game\GameController\bin\Debug\net7.0\Vector2D.pdb

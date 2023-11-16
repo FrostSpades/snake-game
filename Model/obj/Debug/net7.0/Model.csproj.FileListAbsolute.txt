@@ -20,3 +20,7 @@ C:\Users\mhgar\Source\Repos\game-maryfrost_game\Model\obj\Debug\net7.0\Model.dll
 C:\Users\mhgar\Source\Repos\game-maryfrost_game\Model\obj\Debug\net7.0\refint\Model.dll
 C:\Users\mhgar\Source\Repos\game-maryfrost_game\Model\obj\Debug\net7.0\Model.pdb
 C:\Users\mhgar\Source\Repos\game-maryfrost_game\Model\obj\Debug\net7.0\ref\Model.dll
+C:\Users\emand\Source\Repos\game-maryfrost_game\Model\bin\Debug\net7.0\Vector2D.dll
+C:\Users\emand\Source\Repos\game-maryfrost_game\Model\bin\Debug\net7.0\Vector2D.pdb
+C:\Users\emand\Source\Repos\game-maryfrost_game\Model\obj\Debug\net7.0\Model.csproj.AssemblyReference.cache
+C:\Users\emand\Source\Repos\game-maryfrost_game\Model\obj\Debug\net7.0\Model.csproj.CopyComplete

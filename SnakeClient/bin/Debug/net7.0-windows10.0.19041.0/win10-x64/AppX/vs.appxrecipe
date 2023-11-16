@@ -29,29 +29,29 @@
     <AppXManifest Include="C:\Users\emand\Source\Repos\game-maryfrost_game\SnakeClient\bin\Debug\net7.0-windows10.0.19041.0\win10-x64\AppxManifest.xml">
       <PackagePath>AppxManifest.xml</PackagePath>
       <ReRegisterAppIfChanged>true</ReRegisterAppIfChanged>
-      <Modified>2023-11-16T22:04:16.176</Modified>
+      <Modified>2023-11-16T23:19:27.496</Modified>
     </AppXManifest>
   </ItemGroup>
   <ItemGroup>
     <AppxPackagedFile Include="C:\Users\emand\Source\Repos\game-maryfrost_game\SnakeClient\bin\Debug\net7.0-windows10.0.19041.0\win10-x64\resources.pri">
       <PackagePath>resources.pri</PackagePath>
-      <Modified>2023-11-16T22:04:15.331</Modified>
+      <Modified>2023-11-16T22:48:48.622</Modified>
     </AppxPackagedFile>
     <AppxPackagedFile Include="C:\Users\emand\Source\Repos\game-maryfrost_game\SnakeClient\bin\Debug\net7.0-windows10.0.19041.0\win10-x64\SnakeClient.runtimeconfig.json">
       <PackagePath>SnakeClient.runtimeconfig.json</PackagePath>
-      <Modified>2023-11-16T22:04:14.732</Modified>
+      <Modified>2023-11-16T23:19:26.869</Modified>
     </AppxPackagedFile>
     <AppxPackagedFile Include="C:\Users\emand\Source\Repos\game-maryfrost_game\SnakeClient\bin\Debug\net7.0-windows10.0.19041.0\win10-x64\SnakeClient.dll">
       <PackagePath>SnakeClient.dll</PackagePath>
-      <Modified>2023-11-16T22:04:11.290</Modified>
+      <Modified>2023-11-16T23:19:23.723</Modified>
     </AppxPackagedFile>
     <AppxPackagedFile Include="C:\Users\emand\Source\Repos\game-maryfrost_game\SnakeClient\obj\Debug\net7.0-windows10.0.19041.0\win10-x64\apphost.exe">
       <PackagePath>SnakeClient.exe</PackagePath>
-      <Modified>2023-11-16T22:04:11.353</Modified>
+      <Modified>2023-11-16T23:19:23.813</Modified>
     </AppxPackagedFile>
     <AppxPackagedFile Include="C:\Users\emand\Source\Repos\game-maryfrost_game\SnakeClient\bin\Debug\net7.0-windows10.0.19041.0\win10-x64\SnakeClient.deps.json">
       <PackagePath>SnakeClient.deps.json</PackagePath>
-      <Modified>2023-11-16T22:04:14.422</Modified>
+      <Modified>2023-11-16T23:19:26.775</Modified>
     </AppxPackagedFile>
     <AppxPackagedFile Include="C:\Users\emand\.nuget\packages\microsoft.netcore.app.runtime.win-x64\7.0.11\runtimes\win-x64\lib\net7.0\Microsoft.CSharp.dll">
       <PackagePath>Microsoft.CSharp.dll</PackagePath>
@@ -923,11 +923,19 @@
     </AppxPackagedFile>
     <AppxPackagedFile Include="C:\Users\emand\Source\Repos\game-maryfrost_game\GameController\bin\Debug\net7.0\GameController.dll">
       <PackagePath>GameController.dll</PackagePath>
-      <Modified>2023-11-16T22:04:03.962</Modified>
+      <Modified>2023-11-16T23:19:21.700</Modified>
     </AppxPackagedFile>
     <AppxPackagedFile Include="C:\Users\emand\Source\Repos\game-maryfrost_game\Model\bin\Debug\net7.0\Model.dll">
       <PackagePath>Model.dll</PackagePath>
-      <Modified>2023-11-16T22:04:03.231</Modified>
+      <Modified>2023-11-16T23:19:21.216</Modified>
+    </AppxPackagedFile>
+    <AppxPackagedFile Include="C:\Users\emand\Source\Repos\game-maryfrost_game\Vector2D\bin\Debug\net7.0\Vector2D.dll">
+      <PackagePath>Vector2D.dll</PackagePath>
+      <Modified>2023-11-16T23:19:20.790</Modified>
+    </AppxPackagedFile>
+    <AppxPackagedFile Include="C:\Users\emand\Source\Repos\game-maryfrost_game\GameController\bin\Debug\net7.0\NetworkController.dll">
+      <PackagePath>NetworkController.dll</PackagePath>
+      <Modified>2023-11-16T21:47:10.277</Modified>
     </AppxPackagedFile>
     <AppxPackagedFile Include="C:\Program Files\dotnet\packs\Microsoft.Maui.Controls.Ref.win\7.0.92\ref\net7.0-windows10.0.19041\Microsoft.Maui.Controls.Compatibility.pri">
       <PackagePath>Microsoft.Maui.Controls.Compatibility.pri</PackagePath>

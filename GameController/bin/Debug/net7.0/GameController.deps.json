@@ -16,8 +16,16 @@
         }
       },
       "Model/1.0.0": {
+        "dependencies": {
+          "Vector2D": "1.0.0"
+        },
         "runtime": {
           "Model.dll": {}
+        }
+      },
+      "Vector2D/1.0.0": {
+        "runtime": {
+          "Vector2D.dll": {}
         }
       },
       "NetworkController/1.0.0.0": {
@@ -37,6 +45,11 @@
       "sha512": ""
     },
     "Model/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "Vector2D/1.0.0": {
       "type": "project",
       "serviceable": false,
       "sha512": ""
