@@ -1,0 +1,16 @@
+C:\Users\emand\Source\Repos\game-maryfrost_game\GameController\bin\Debug\net7.0\GameController.deps.json
+C:\Users\emand\Source\Repos\game-maryfrost_game\GameController\bin\Debug\net7.0\GameController.dll
+C:\Users\emand\Source\Repos\game-maryfrost_game\GameController\bin\Debug\net7.0\GameController.pdb
+C:\Users\emand\Source\Repos\game-maryfrost_game\GameController\bin\Debug\net7.0\Model.dll
+C:\Users\emand\Source\Repos\game-maryfrost_game\GameController\bin\Debug\net7.0\NetworkController.dll
+C:\Users\emand\Source\Repos\game-maryfrost_game\GameController\bin\Debug\net7.0\Model.pdb
+C:\Users\emand\Source\Repos\game-maryfrost_game\GameController\obj\Debug\net7.0\GameController.csproj.AssemblyReference.cache
+C:\Users\emand\Source\Repos\game-maryfrost_game\GameController\obj\Debug\net7.0\GameController.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\emand\Source\Repos\game-maryfrost_game\GameController\obj\Debug\net7.0\GameController.AssemblyInfoInputs.cache
+C:\Users\emand\Source\Repos\game-maryfrost_game\GameController\obj\Debug\net7.0\GameController.AssemblyInfo.cs
+C:\Users\emand\Source\Repos\game-maryfrost_game\GameController\obj\Debug\net7.0\GameController.csproj.CoreCompileInputs.cache
+C:\Users\emand\Source\Repos\game-maryfrost_game\GameController\obj\Debug\net7.0\GameController.csproj.CopyComplete
+C:\Users\emand\Source\Repos\game-maryfrost_game\GameController\obj\Debug\net7.0\GameController.dll
+C:\Users\emand\Source\Repos\game-maryfrost_game\GameController\obj\Debug\net7.0\refint\GameController.dll
+C:\Users\emand\Source\Repos\game-maryfrost_game\GameController\obj\Debug\net7.0\GameController.pdb
+C:\Users\emand\Source\Repos\game-maryfrost_game\GameController\obj\Debug\net7.0\ref\GameController.dll
