@@ -66,11 +66,19 @@ public class WorldPanel : IDrawable
 
         // example code for how to draw
         // (the image is not visible in the starter code)
-        canvas.DrawImage(wall, 0, 0, wall.Width, wall.Height);
+        //canvas.DrawImage(wall, 0, 0, wall.Width, wall.Height);
 
         List<Wall> walls = model.GetWalls();
         List<Powerup> powerups = model.GetPowerups();
         List<Snake> snakes = model.GetSnakes();
+
+        foreach(Wall w in walls) 
+        { 
+            foreach(Tuple<double, double> segment in w.GetSegments())
+            {
+                canvas.DrawImage(wall, (float)segment.Item1, (float)segment.Item2, 25, 25);
+            }
+        }
     }
 
 }
