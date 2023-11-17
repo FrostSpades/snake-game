@@ -29,29 +29,29 @@
     <AppXManifest Include="C:\Users\emand\Source\Repos\game-maryfrost_game\SnakeClient\bin\Debug\net7.0-windows10.0.19041.0\win10-x64\AppxManifest.xml">
       <PackagePath>AppxManifest.xml</PackagePath>
       <ReRegisterAppIfChanged>true</ReRegisterAppIfChanged>
-      <Modified>2023-11-17T19:16:43.774</Modified>
+      <Modified>2023-11-17T21:41:07.365</Modified>
     </AppXManifest>
   </ItemGroup>
   <ItemGroup>
     <AppxPackagedFile Include="C:\Users\emand\Source\Repos\game-maryfrost_game\SnakeClient\bin\Debug\net7.0-windows10.0.19041.0\win10-x64\resources.pri">
       <PackagePath>resources.pri</PackagePath>
-      <Modified>2023-11-17T19:16:43.259</Modified>
+      <Modified>2023-11-17T21:41:06.766</Modified>
     </AppxPackagedFile>
     <AppxPackagedFile Include="C:\Users\emand\Source\Repos\game-maryfrost_game\SnakeClient\bin\Debug\net7.0-windows10.0.19041.0\win10-x64\SnakeClient.runtimeconfig.json">
       <PackagePath>SnakeClient.runtimeconfig.json</PackagePath>
-      <Modified>2023-11-17T19:15:39.253</Modified>
+      <Modified>2023-11-17T20:38:54.023</Modified>
     </AppxPackagedFile>
     <AppxPackagedFile Include="C:\Users\emand\Source\Repos\game-maryfrost_game\SnakeClient\bin\Debug\net7.0-windows10.0.19041.0\win10-x64\SnakeClient.dll">
       <PackagePath>SnakeClient.dll</PackagePath>
-      <Modified>2023-11-17T19:16:39.606</Modified>
+      <Modified>2023-11-17T21:41:04.441</Modified>
     </AppxPackagedFile>
     <AppxPackagedFile Include="C:\Users\emand\Source\Repos\game-maryfrost_game\SnakeClient\obj\Debug\net7.0-windows10.0.19041.0\win10-x64\apphost.exe">
       <PackagePath>SnakeClient.exe</PackagePath>
-      <Modified>2023-11-17T19:16:39.618</Modified>
+      <Modified>2023-11-17T21:41:04.465</Modified>
     </AppxPackagedFile>
     <AppxPackagedFile Include="C:\Users\emand\Source\Repos\game-maryfrost_game\SnakeClient\bin\Debug\net7.0-windows10.0.19041.0\win10-x64\SnakeClient.deps.json">
       <PackagePath>SnakeClient.deps.json</PackagePath>
-      <Modified>2023-11-17T19:15:38.706</Modified>
+      <Modified>2023-11-17T21:10:22.658</Modified>
     </AppxPackagedFile>
     <AppxPackagedFile Include="C:\Users\emand\.nuget\packages\microsoft.netcore.app.runtime.win-x64\7.0.11\runtimes\win-x64\lib\net7.0\Microsoft.CSharp.dll">
       <PackagePath>Microsoft.CSharp.dll</PackagePath>
@@ -927,19 +927,19 @@
     </AppxPackagedFile>
     <AppxPackagedFile Include="C:\Users\emand\Source\Repos\game-maryfrost_game\GameController\bin\Debug\net7.0\GameController.dll">
       <PackagePath>GameController.dll</PackagePath>
-      <Modified>2023-11-17T19:15:27.637</Modified>
+      <Modified>2023-11-17T21:39:54.184</Modified>
     </AppxPackagedFile>
     <AppxPackagedFile Include="C:\Users\emand\Source\Repos\game-maryfrost_game\Model\bin\Debug\net7.0\Model.dll">
       <PackagePath>Model.dll</PackagePath>
-      <Modified>2023-11-17T19:15:26.824</Modified>
+      <Modified>2023-11-17T21:39:53.832</Modified>
     </AppxPackagedFile>
     <AppxPackagedFile Include="C:\Users\emand\Source\Repos\game-maryfrost_game\Vector2D\bin\Debug\net7.0\Vector2D.dll">
       <PackagePath>Vector2D.dll</PackagePath>
-      <Modified>2023-11-16T23:19:20.790</Modified>
+      <Modified>2023-11-17T20:38:35.102</Modified>
     </AppxPackagedFile>
     <AppxPackagedFile Include="C:\Users\emand\Source\Repos\game-maryfrost_game\GameController\bin\Debug\net7.0\NetworkController.dll">
       <PackagePath>NetworkController.dll</PackagePath>
-      <Modified>2023-11-16T21:47:10.277</Modified>
+      <Modified>2023-11-17T20:37:58.397</Modified>
     </AppxPackagedFile>
     <AppxPackagedFile Include="C:\Program Files\dotnet\packs\Microsoft.Maui.Controls.Ref.win\7.0.92\ref\net7.0-windows10.0.19041\Microsoft.Maui.Controls.Compatibility.pri">
       <PackagePath>Microsoft.Maui.Controls.Compatibility.pri</PackagePath>
@@ -955,43 +955,43 @@
     </AppxPackagedFile>
     <AppxPackagedFile Include="C:\Users\emand\Source\Repos\game-maryfrost_game\SnakeClient\Resources\Raw\AboutAssets.txt">
       <PackagePath>AboutAssets.txt</PackagePath>
-      <Modified>2023-11-15T22:07:04.335</Modified>
+      <Modified>2023-11-17T20:37:58.492</Modified>
     </AppxPackagedFile>
     <AppxPackagedFile Include="C:\Users\emand\Source\Repos\game-maryfrost_game\SnakeClient\obj\Debug\net7.0-windows10.0.19041.0\win10-x64\resizetizer\sp\splashSplashScreen.scale-100.png">
       <PackagePath>splashSplashScreen.scale-100.png</PackagePath>
-      <Modified>2023-11-16T21:39:45.155</Modified>
+      <Modified>2023-11-17T20:38:02.091</Modified>
     </AppxPackagedFile>
     <AppxPackagedFile Include="C:\Users\emand\Source\Repos\game-maryfrost_game\SnakeClient\obj\Debug\net7.0-windows10.0.19041.0\win10-x64\resizetizer\sp\splashSplashScreen.scale-125.png">
       <PackagePath>splashSplashScreen.scale-125.png</PackagePath>
-      <Modified>2023-11-16T21:39:45.190</Modified>
+      <Modified>2023-11-17T20:38:02.092</Modified>
     </AppxPackagedFile>
     <AppxPackagedFile Include="C:\Users\emand\Source\Repos\game-maryfrost_game\SnakeClient\obj\Debug\net7.0-windows10.0.19041.0\win10-x64\resizetizer\sp\splashSplashScreen.scale-150.png">
       <PackagePath>splashSplashScreen.scale-150.png</PackagePath>
-      <Modified>2023-11-16T21:39:45.236</Modified>
+      <Modified>2023-11-17T20:38:02.093</Modified>
     </AppxPackagedFile>
     <AppxPackagedFile Include="C:\Users\emand\Source\Repos\game-maryfrost_game\SnakeClient\obj\Debug\net7.0-windows10.0.19041.0\win10-x64\resizetizer\sp\splashSplashScreen.scale-200.png">
       <PackagePath>splashSplashScreen.scale-200.png</PackagePath>
-      <Modified>2023-11-16T21:39:45.334</Modified>
+      <Modified>2023-11-17T20:38:02.094</Modified>
     </AppxPackagedFile>
     <AppxPackagedFile Include="C:\Users\emand\Source\Repos\game-maryfrost_game\SnakeClient\obj\Debug\net7.0-windows10.0.19041.0\win10-x64\resizetizer\sp\splashSplashScreen.scale-400.png">
       <PackagePath>splashSplashScreen.scale-400.png</PackagePath>
-      <Modified>2023-11-16T21:39:45.746</Modified>
+      <Modified>2023-11-17T20:38:02.095</Modified>
     </AppxPackagedFile>
     <AppxPackagedFile Include="C:\Users\emand\Source\Repos\game-maryfrost_game\SnakeClient\obj\Debug\net7.0-windows10.0.19041.0\win10-x64\resizetizer\f\OpenSans-Regular.ttf">
       <PackagePath>OpenSans-Regular.ttf</PackagePath>
-      <Modified>2023-11-15T22:07:04.328</Modified>
+      <Modified>2023-11-17T20:38:02.083</Modified>
     </AppxPackagedFile>
     <AppxPackagedFile Include="C:\Users\emand\Source\Repos\game-maryfrost_game\SnakeClient\obj\Debug\net7.0-windows10.0.19041.0\win10-x64\resizetizer\f\OpenSans-Semibold.ttf">
       <PackagePath>OpenSans-Semibold.ttf</PackagePath>
-      <Modified>2023-11-15T22:07:04.331</Modified>
+      <Modified>2023-11-17T20:38:02.086</Modified>
     </AppxPackagedFile>
     <AppxPackagedFile Include="C:\Users\emand\Source\Repos\game-maryfrost_game\SnakeClient\obj\Debug\net7.0-windows10.0.19041.0\win10-x64\resizetizer\r\background.scale-100.png">
       <PackagePath>background.scale-100.png</PackagePath>
-      <Modified>2023-11-15T22:07:04.333</Modified>
+      <Modified>2023-11-17T20:38:02.090</Modified>
     </AppxPackagedFile>
     <AppxPackagedFile Include="C:\Users\emand\Source\Repos\game-maryfrost_game\SnakeClient\obj\Debug\net7.0-windows10.0.19041.0\win10-x64\resizetizer\r\wallsprite.scale-100.png">
       <PackagePath>wallsprite.scale-100.png</PackagePath>
-      <Modified>2023-11-15T22:07:04.334</Modified>
+      <Modified>2023-11-17T20:38:02.090</Modified>
     </AppxPackagedFile>
   </ItemGroup>
   <ItemGroup>

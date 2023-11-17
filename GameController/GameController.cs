@@ -14,6 +14,10 @@ public class GameController
     private Model model;
     private int phase;
     private SocketState? server;
+
+    public delegate void GameUpdateHandler();
+    public event GameUpdateHandler GameUpdate;
+
     public GameController() 
     {
         model = new();
@@ -119,5 +123,7 @@ public class GameController
 
             state.RemoveData(0, p.Length);
         }
+
+        GameUpdate.Invoke();
     }
 }

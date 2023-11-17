@@ -6,8 +6,12 @@ namespace Model
 
     public class Wall
     {
+        [JsonInclude]
         public int wall;
+
+        [JsonInclude]
         public Vector2D p1, p2;
+        
         private List<Tuple<double, double>> segments;
 
         [JsonConstructor]
@@ -16,7 +20,8 @@ namespace Model
             this.wall = wall;
             this.p1 = p1;
             this.p2 = p2;
-            double height, width;
+            segments = new();
+
             if (p1.X == p2.X)
             {
                 if (p2.Y > p1.Y)

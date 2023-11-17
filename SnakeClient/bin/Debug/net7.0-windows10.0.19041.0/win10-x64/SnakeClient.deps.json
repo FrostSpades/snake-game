@@ -18,6 +18,7 @@
           "Microsoft.Maui.Graphics": "7.0.92",
           "Microsoft.Maui.Graphics.Win2D.WinUI.Desktop": "7.0.92",
           "Microsoft.WindowsAppSDK": "1.2.221209.1",
+          "Model": "1.0.0",
           "runtimepack.Microsoft.NETCore.App.Runtime.win-x64": "7.0.11",
           "runtimepack.Microsoft.Maui.Core.Runtime.win": "7.0.92",
           "runtimepack.Microsoft.Maui.Controls.Runtime.win": "7.0.92",

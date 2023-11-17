@@ -8,6 +8,7 @@ public partial class MainPage : ContentPage
     public MainPage()
     {
         controller = new GameController();
+        controller.GameUpdate += OnFrame;
         InitializeComponent();
 
         worldPanel.SetModel(controller.GetModel());
@@ -20,7 +21,7 @@ public partial class MainPage : ContentPage
         keyboardHack.Focus();
     }
 
-    void OnTextChanged(object sender, TextChangedEventArgs args)
+    void OnTextChanged(object sender, EventArgs args)
     {
         Entry entry = (Entry)sender;
         String text = entry.Text.ToLower();

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Immutable;
+using System.Text.Json;
 
 namespace Model
 {
@@ -25,7 +26,12 @@ namespace Model
 
         public void AddWall(string wall)
         {
+            Wall? rebuilt = JsonSerializer.Deserialize<Wall>(wall);
 
+            if (rebuilt != null)
+            {
+                walls.Add(rebuilt);
+            }
         }
 
         public void AddSnake(string snake)
