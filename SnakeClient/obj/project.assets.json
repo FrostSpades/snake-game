@@ -2000,7 +2000,8 @@
       "Microsoft.Extensions.Logging.Debug >= 7.0.0",
       "Microsoft.Maui.Graphics >= 7.0.92",
       "Microsoft.Maui.Graphics.Win2D.WinUI.Desktop >= 7.0.92",
-      "Microsoft.WindowsAppSDK >= 1.2.221209.1"
+      "Microsoft.WindowsAppSDK >= 1.2.221209.1",
+      "Model >= 1.0.0"
     ]
   },
   "packageFolders": {
@@ -2039,6 +2040,9 @@
           "projectReferences": {
             "C:\\Users\\emand\\Source\\Repos\\game-maryfrost_game\\GameController\\GameController.csproj": {
               "projectPath": "C:\\Users\\emand\\Source\\Repos\\game-maryfrost_game\\GameController\\GameController.csproj"
+            },
+            "C:\\Users\\emand\\Source\\Repos\\game-maryfrost_game\\Model\\Model.csproj": {
+              "projectPath": "C:\\Users\\emand\\Source\\Repos\\game-maryfrost_game\\Model\\Model.csproj"
             }
           }
         }

@@ -7,7 +7,7 @@ using SnakeGame;
 
 namespace Model
 {
-    internal class Powerup
+    public class Powerup
     {
         public int power;
         public Vector2D loc;

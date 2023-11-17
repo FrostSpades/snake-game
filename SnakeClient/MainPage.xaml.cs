@@ -1,7 +1,6 @@
 ﻿namespace SnakeGame;
 using GameController;
-
-
+using Microsoft.UI.Xaml.Controls;
 
 public partial class MainPage : ContentPage
 {
@@ -10,6 +9,9 @@ public partial class MainPage : ContentPage
     {
         controller = new GameController();
         InitializeComponent();
+
+        worldPanel.SetModel(controller.GetModel());
+
         graphicsView.Invalidate();
     }
 

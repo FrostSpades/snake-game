@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿namespace SnakeGame;
+
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using IImage = Microsoft.Maui.Graphics.IImage;
@@ -13,14 +15,14 @@ using Microsoft.Maui;
 using System.Net;
 using Font = Microsoft.Maui.Graphics.Font;
 using SizeF = Microsoft.Maui.Graphics.SizeF;
+using Model;
 
 
-
-namespace SnakeGame;
 public class WorldPanel : IDrawable
 {
     private IImage wall;
     private IImage background;
+    private Model model;
 
     private bool initializedForDrawing = false;
 
@@ -42,6 +44,11 @@ public class WorldPanel : IDrawable
     {
     }
 
+    public void SetModel(Model model)
+    {
+        this.model = model;
+    }
+
     private void InitializeDrawing()
     {
         wall = loadImage( "wallsprite.png" );
@@ -60,6 +67,10 @@ public class WorldPanel : IDrawable
         // example code for how to draw
         // (the image is not visible in the starter code)
         canvas.DrawImage(wall, 0, 0, wall.Width, wall.Height);
+
+        List<Wall> walls = model.GetWalls();
+        List<Powerup> powerups = model.GetPowerups();
+        List<Snake> snakes = model.GetSnakes();
     }
 
 }

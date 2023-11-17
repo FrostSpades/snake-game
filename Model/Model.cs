@@ -1,14 +1,16 @@
-﻿namespace Model
+﻿using System.Collections.Immutable;
+
+namespace Model
 {
     public class Model
     {
-        private int id;
+        private int snakeID;
         private int worldSize;
         private List<Wall> walls;
         private List<Snake> snakes;
         private List<Powerup> powerups;
 
-        public Model(string id)
+        public Model()
         {
             walls = new();
             snakes = new();
@@ -34,6 +36,26 @@
         public void AddPowerup(string powerup)
         {
 
+        }
+
+        public void SetID(string id)
+        {
+            //snakeID = id;
+        }
+
+        public List<Snake> GetSnakes()
+        {
+            return snakes;
+        }
+
+        public List<Wall> GetWalls()
+        {
+            return walls;
+        }
+
+        public List<Powerup> GetPowerups()
+        {
+            return powerups;
         }
     }
 }

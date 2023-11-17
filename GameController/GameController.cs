@@ -11,13 +11,20 @@ using Newtonsoft.Json.Linq;
 public class GameController
 {
     private string? name;
-    private Model? model;
+    private Model model;
     private int phase;
     private SocketState? server;
     public GameController() 
     {
+        model = new();
         phase = 0;
     }
+
+    public Model GetModel()
+    {
+        return model;
+    }
+
     public void Move(string direction)
     {
         // ADD LOGIC SO THAT YOU CAN'T MOVE IF NOT CONNECTED YET
@@ -67,7 +74,7 @@ public class GameController
                     string id = p.TrimEnd('\n');
 
                     // Get the player ID
-                    model = new Model(id);
+                    model.SetID(id);
 
                     // Change the phase so that the next string that is read will do phase 1
                     phase = 1;

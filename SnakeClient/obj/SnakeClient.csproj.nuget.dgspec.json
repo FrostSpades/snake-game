@@ -170,6 +170,9 @@
             "projectReferences": {
               "C:\\Users\\emand\\Source\\Repos\\game-maryfrost_game\\GameController\\GameController.csproj": {
                 "projectPath": "C:\\Users\\emand\\Source\\Repos\\game-maryfrost_game\\GameController\\GameController.csproj"
+              },
+              "C:\\Users\\emand\\Source\\Repos\\game-maryfrost_game\\Model\\Model.csproj": {
+                "projectPath": "C:\\Users\\emand\\Source\\Repos\\game-maryfrost_game\\Model\\Model.csproj"
               }
             }
           }

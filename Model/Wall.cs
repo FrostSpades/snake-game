@@ -8,7 +8,7 @@ using SnakeGame;
 
 namespace Model
 {
-    internal class Wall
+    public class Wall
     {
         public int wall;
         public Vector2D p1, p2;

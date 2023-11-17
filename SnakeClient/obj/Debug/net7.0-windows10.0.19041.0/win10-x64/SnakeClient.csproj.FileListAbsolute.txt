@@ -295,3 +295,4 @@ C:\Users\mhgar\Source\Repos\game-maryfrost_game\SnakeClient\obj\Debug\net7.0-win
 C:\Users\emand\Source\Repos\game-maryfrost_game\SnakeClient\bin\Debug\net7.0-windows10.0.19041.0\win10-x64\NetworkController.dll
 C:\Users\emand\Source\Repos\game-maryfrost_game\SnakeClient\bin\Debug\net7.0-windows10.0.19041.0\win10-x64\Vector2D.dll
 C:\Users\emand\Source\Repos\game-maryfrost_game\SnakeClient\bin\Debug\net7.0-windows10.0.19041.0\win10-x64\Vector2D.pdb
+C:\Users\emand\Source\Repos\game-maryfrost_game\SnakeClient\bin\Debug\net7.0-windows10.0.19041.0\win10-x64\Newtonsoft.Json.dll

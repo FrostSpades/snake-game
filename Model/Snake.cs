@@ -7,7 +7,7 @@ using SnakeGame;
 
 namespace Model
 {
-    internal class Snake
+    public class Snake
     {
         public int snake;
         public string name;
