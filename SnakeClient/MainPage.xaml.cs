@@ -9,11 +9,17 @@ public partial class MainPage : ContentPage
     {
         controller = new GameController();
         controller.GameUpdate += OnFrame;
+        controller.Error += ConnectionError;
         InitializeComponent();
 
         worldPanel.SetModel(controller.GetModel());
 
         graphicsView.Invalidate();
+    }
+    
+    void ConnectionError()
+    {
+        DisplayAlert("Error", "Error", "Close");
     }
 
     void OnTapped(object sender, EventArgs args)
@@ -27,19 +33,19 @@ public partial class MainPage : ContentPage
         String text = entry.Text.ToLower();
         if (text == "w")
         {
-            controller.Move("w");
+            controller.Move("up");
         }
         else if (text == "a")
         {
-            controller.Move("a");
+            controller.Move("left");
         }
         else if (text == "s")
         {
-            controller.Move("s");
+            controller.Move("down");
         }
         else if (text == "d")
         {
-            controller.Move("d");
+            controller.Move("right");
         }
         entry.Text = "";
     }

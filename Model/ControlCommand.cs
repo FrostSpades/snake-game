@@ -2,18 +2,20 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using SnakeGame;
 
 namespace Model
 {
-    internal class ControlCommand
+    public class ControlCommand
     {
+        [JsonInclude]
         public string moving;
 
-        public ControlCommand() 
+        public ControlCommand(string direction) 
         {
-
+            moving = direction;
         }
     }
 }

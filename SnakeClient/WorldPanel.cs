@@ -16,7 +16,7 @@ using System.Net;
 using Font = Microsoft.Maui.Graphics.Font;
 using SizeF = Microsoft.Maui.Graphics.SizeF;
 using Model;
-
+using Newtonsoft.Json.Serialization;
 
 public class WorldPanel : IDrawable
 {
@@ -64,21 +64,66 @@ public class WorldPanel : IDrawable
         // undo previous transformations from last frame
         canvas.ResetState();
 
-        // example code for how to draw
-        // (the image is not visible in the starter code)
-        //canvas.DrawImage(wall, 0, 0, wall.Width, wall.Height);
+        int viewSize = 1000;
+        Vector2D head;
 
-        List<Wall> walls = model.GetWalls();
-        List<Powerup> powerups = model.GetPowerups();
-        List<Snake> snakes = model.GetSnakes();
+        lock (model.GetSnakeLock())
+        {
+            head = model.GetHead();
+        }
+        
+
+        if (head != null)
+        {
+            float playerX = (float)head.GetX();
+            float playerY = (float)head.GetY();
+
+            canvas.Translate(-playerX + (viewSize / 2), -playerY + (viewSize / 2));
+        }
+
+        if (model.GetWorldSize() != 0)
+        {
+            canvas.DrawImage(background, (-model.GetWorldSize() / 2), (-model.GetWorldSize() / 2), model.GetWorldSize(), model.GetWorldSize());
+        }
+        
+
+        IEnumerable<Wall> walls = model.GetWalls();
+        IEnumerable<Powerup> powerups = model.GetPowerups();
+        IEnumerable<Snake> snakes = model.GetSnakes();
 
         foreach(Wall w in walls) 
         { 
             foreach(Tuple<double, double> segment in w.GetSegments())
             {
-                canvas.DrawImage(wall, (float)segment.Item1, (float)segment.Item2, 25, 25);
+                canvas.DrawImage(wall, (float)segment.Item1, (float)segment.Item2, 50, 50);
             }
         }
+
+        lock (model.GetSnakeLock())
+        {
+            foreach (Snake s in snakes)
+            {
+                foreach (Tuple<float, float, float, float> segment in s.GetSegments())
+                {
+
+                    canvas.StrokeColor = Color.FromArgb("#FF00FF00");
+                    canvas.StrokeSize = 10;
+                    canvas.StrokeLineCap = LineCap.Round;
+                    canvas.DrawLine(segment.Item1, segment.Item2, segment.Item3, segment.Item4);
+                }
+            }
+        }
+
+        lock (powerups)
+        {
+            foreach (Powerup p in powerups)
+            {
+                Vector2D loc = p.GetLocation();
+                canvas.StrokeColor = Color.FromArgb("FFFF0000");
+                canvas.DrawCircle((int)loc.GetX(), (int)loc.GetY(), 4);
+            }
+        }
+        
     }
 
 }

@@ -7,6 +7,7 @@ using NetworkUtil;
 using Model;
 using System.Runtime.InteropServices.JavaScript;
 using Newtonsoft.Json.Linq;
+using System.Text.Json;
 
 public class GameController
 {
@@ -18,10 +19,21 @@ public class GameController
     public delegate void GameUpdateHandler();
     public event GameUpdateHandler GameUpdate;
 
+    public delegate void ConnectionError();
+    public event ConnectionError Error;
+
+    private string upCommand, downCommand, leftCommand, rightCommand, noneCommand;
+
     public GameController() 
     {
         model = new();
         phase = 0;
+
+        upCommand = JsonSerializer.Serialize(new ControlCommand("up"));
+        downCommand = JsonSerializer.Serialize(new ControlCommand("down"));
+        leftCommand = JsonSerializer.Serialize(new ControlCommand("left"));
+        rightCommand = JsonSerializer.Serialize(new ControlCommand("right"));
+        noneCommand = JsonSerializer.Serialize(new ControlCommand("none"));
     }
 
     public Model GetModel()
@@ -31,9 +43,32 @@ public class GameController
 
     public void Move(string direction)
     {
-        // ADD LOGIC SO THAT YOU CAN'T MOVE IF NOT CONNECTED YET
+        if (server == null)
+        {
+            return;
+        }
 
-        string message = direction + "\n";
+        string message = "";
+
+        switch (direction)
+        {
+            case "up":
+                message = upCommand + "\n";
+                break;
+            case "down":
+                message = downCommand + "\n";
+                break;
+            case "left":
+                message = leftCommand + "\n";
+                break;
+            case "right":
+                message = rightCommand + "\n";
+                break;
+            case "none":
+                message = noneCommand + "\n";
+                break;
+        }
+        
         Networking.Send(server.TheSocket, message);
     }
     public void Connect(string server, string name)
@@ -44,6 +79,11 @@ public class GameController
     }
     private void OnConnect(SocketState state)
     {
+        if (state.ErrorOccurred)
+        {
+            Error.Invoke();
+            return;
+        }
         server = state;
         state.OnNetworkAction = ReceiveMessage;
         Networking.GetData(state);
@@ -70,7 +110,6 @@ public class GameController
             if (p[p.Length - 1] != '\n')
                 break;
 
-            //Debug.WriteLine(p);
 
             switch (phase) 
             {
@@ -97,7 +136,6 @@ public class GameController
                 case 2:
                     string json = p.TrimEnd('\n');
 
-                    // IF TOO SLOW, CHANGE THIS
 
                     JObject obj = JObject.Parse(json);
 
