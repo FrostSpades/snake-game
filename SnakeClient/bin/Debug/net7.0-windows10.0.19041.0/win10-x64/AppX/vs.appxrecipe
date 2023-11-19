@@ -29,7 +29,7 @@
     <AppXManifest Include="C:\Users\emand\Source\Repos\game-maryfrost_game\SnakeClient\bin\Debug\net7.0-windows10.0.19041.0\win10-x64\AppxManifest.xml">
       <PackagePath>AppxManifest.xml</PackagePath>
       <ReRegisterAppIfChanged>true</ReRegisterAppIfChanged>
-      <Modified>2023-11-19T23:33:57.260</Modified>
+      <Modified>2023-11-19T23:40:45.880</Modified>
     </AppXManifest>
   </ItemGroup>
   <ItemGroup>
@@ -43,11 +43,11 @@
     </AppxPackagedFile>
     <AppxPackagedFile Include="C:\Users\emand\Source\Repos\game-maryfrost_game\SnakeClient\bin\Debug\net7.0-windows10.0.19041.0\win10-x64\SnakeClient.dll">
       <PackagePath>SnakeClient.dll</PackagePath>
-      <Modified>2023-11-19T23:33:53.811</Modified>
+      <Modified>2023-11-19T23:40:42.620</Modified>
     </AppxPackagedFile>
     <AppxPackagedFile Include="C:\Users\emand\Source\Repos\game-maryfrost_game\SnakeClient\obj\Debug\net7.0-windows10.0.19041.0\win10-x64\apphost.exe">
       <PackagePath>SnakeClient.exe</PackagePath>
-      <Modified>2023-11-19T23:33:53.872</Modified>
+      <Modified>2023-11-19T23:40:42.668</Modified>
     </AppxPackagedFile>
     <AppxPackagedFile Include="C:\Users\emand\Source\Repos\game-maryfrost_game\SnakeClient\bin\Debug\net7.0-windows10.0.19041.0\win10-x64\SnakeClient.deps.json">
       <PackagePath>SnakeClient.deps.json</PackagePath>
