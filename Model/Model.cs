@@ -1,5 +1,6 @@
 ﻿using SnakeGame;
 using System.Collections.Immutable;
+using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Text.Json;
 using System.Xml.Linq;
@@ -64,7 +65,7 @@ namespace Model
                 {
                     if (snakes.ContainsKey(rebuilt.snake))
                     {
-                        if (!rebuilt.alive)
+                        if (rebuilt.dc)
                         {
                             snakes.Remove(rebuilt.snake);
                         }
@@ -72,14 +73,14 @@ namespace Model
                         {
                             snakes[rebuilt.snake] = rebuilt;
                         }
+                        
                     }
                     else
                     {
-                        if (rebuilt.alive)
+                        if (!rebuilt.dc)
                         {
                             snakes.Add(rebuilt.snake, rebuilt);
                         }
-
                     }
 
                     if (rebuilt.snake == snakeID)

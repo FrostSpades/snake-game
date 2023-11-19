@@ -23,7 +23,7 @@ public class WorldPanel : IDrawable
 {
     private IImage wall;
     private IImage background;
-    private IImage skeleTail, skeleHead, skeleBody;
+    private IImage skeleTail, skeleHeadUp, skeleHeadDown, skeleHeadRight, skeleHeadLeft, skeleBodyUp, skeleBodyDown;
     private Model model;
 
     private bool initializedForDrawing = false;
@@ -31,8 +31,8 @@ public class WorldPanel : IDrawable
     private IImage loadImage(string name)
     {
         Assembly assembly = GetType().GetTypeInfo().Assembly;
-        string path = "SnakeClient.Resources.Images";
-        using (Stream stream = assembly.GetManifestResourceStream($"{path}.{name}"))
+        string path = "SnakeClient.Resources.Images." + name;
+        using (Stream stream = assembly.GetManifestResourceStream(path))
         {
 #if MACCATALYST
             return PlatformImage.FromStream(stream);
@@ -55,9 +55,13 @@ public class WorldPanel : IDrawable
     {
         wall = loadImage( "wallsprite.png" );
         background = loadImage( "background.png" );
-        //skeleHead = loadImage();
-        //skeleTail = loadImage();
-        //skeleBody = loadImage();
+        skeleHeadUp = loadImage("skeleheadup.png");
+        skeleHeadDown = loadImage("skeleheaddown.png");
+        skeleHeadLeft = loadImage("skeleheadleft.png");
+        skeleHeadRight = loadImage("skeleheadright.png");
+        skeleTail = loadImage("skeletail.png");
+        skeleBodyUp = loadImage("skelebodyup.png");
+        skeleBodyDown = loadImage("skelebodydown.png");
         initializedForDrawing = true;
     }
 
@@ -132,7 +136,7 @@ public class WorldPanel : IDrawable
         {
             int remainder = s.snake % 10;
 
-            if (!s.died)
+            if (s.alive)
             {
                 switch (remainder)
                 {
@@ -174,21 +178,64 @@ public class WorldPanel : IDrawable
                 {
                     canvas.DrawLine(segment.Item1, segment.Item2, segment.Item3, segment.Item4);
                 }
+
+                canvas.StrokeColor = Color.FromArgb("#FFFFFFFF");
+
+                Vector2D sHead = s.GetHead();
+                canvas.DrawString(s.GetName() + ": " + s.GetScore().ToString(), (float)sHead.GetX(), (float)sHead.GetY() + 13, HorizontalAlignment.Center);
             }
 
-            else if (!s.alive)
+            else
             {
                 foreach (Tuple<float, float, float, float> segment in s.GetSegments())
                 {
-                    
+                    if (segment.Item1 == segment.Item3)
+                    {
+                        if (segment.Item4 > segment.Item2)
+                        {
+                            canvas.DrawImage(skeleBodyUp, segment.Item1, segment.Item2, 11, segment.Item4 - segment.Item2);
+                        }
+                        else
+                        {
+                            canvas.DrawImage(skeleBodyUp, segment.Item3, segment.Item4, 11, segment.Item2 - segment.Item4);
+                        }
+                    }
+                    else
+                    {
+                        if (segment.Item3 > segment.Item1)
+                        {
+                            canvas.DrawImage(skeleBodyDown, segment.Item1, segment.Item2, segment.Item3 - segment.Item1, 11);
+                        }
+                        else
+                        {
+                            canvas.DrawImage(skeleBodyDown, segment.Item3, segment.Item4, segment.Item1 - segment.Item3, 11);
+                        }
+                    }
+
+                    Vector2D head = s.GetHead();
+                    string dir = s.GetDir();
+
+                    if (dir == "up")
+                    {
+                        canvas.DrawImage(skeleHeadUp, (float)head.GetX() - 2, (float)head.GetY(), 15, 15);
+                    }
+                    else if (dir == "down")
+                    {
+                        canvas.DrawImage(skeleHeadDown, (float)head.GetX() - 2, (float)head.GetY(), 15, 15);
+                    }
+                    else if (dir == "left")
+                    {
+                        canvas.DrawImage(skeleHeadLeft, (float)head.GetX(), (float)head.GetY() - 2, 15, 15);
+                    }
+                    else if (dir == "right")
+                    {
+                        canvas.DrawImage(skeleHeadRight, (float)head.GetX(), (float)head.GetY() - 2, 15, 15);
+                    }
                 }
             }
 
 
-            canvas.StrokeColor = Color.FromArgb("#FFFFFFFF");
-
-            Vector2D sHead = s.GetHead();
-            canvas.DrawString(s.GetName() + ": " + s.GetScore().ToString(), (float)sHead.GetX(), (float)sHead.GetY() + 13, HorizontalAlignment.Center);
+            
         }
     }
 

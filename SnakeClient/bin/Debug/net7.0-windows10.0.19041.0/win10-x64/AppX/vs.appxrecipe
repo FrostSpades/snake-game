@@ -29,13 +29,13 @@
     <AppXManifest Include="C:\Users\emand\Source\Repos\game-maryfrost_game\SnakeClient\bin\Debug\net7.0-windows10.0.19041.0\win10-x64\AppxManifest.xml">
       <PackagePath>AppxManifest.xml</PackagePath>
       <ReRegisterAppIfChanged>true</ReRegisterAppIfChanged>
-      <Modified>2023-11-19T20:52:25.061</Modified>
+      <Modified>2023-11-19T22:55:37.131</Modified>
     </AppXManifest>
   </ItemGroup>
   <ItemGroup>
     <AppxPackagedFile Include="C:\Users\emand\Source\Repos\game-maryfrost_game\SnakeClient\bin\Debug\net7.0-windows10.0.19041.0\win10-x64\resources.pri">
       <PackagePath>resources.pri</PackagePath>
-      <Modified>2023-11-19T20:52:24.718</Modified>
+      <Modified>2023-11-19T22:55:36.737</Modified>
     </AppxPackagedFile>
     <AppxPackagedFile Include="C:\Users\emand\Source\Repos\game-maryfrost_game\SnakeClient\bin\Debug\net7.0-windows10.0.19041.0\win10-x64\SnakeClient.runtimeconfig.json">
       <PackagePath>SnakeClient.runtimeconfig.json</PackagePath>
@@ -43,15 +43,15 @@
     </AppxPackagedFile>
     <AppxPackagedFile Include="C:\Users\emand\Source\Repos\game-maryfrost_game\SnakeClient\bin\Debug\net7.0-windows10.0.19041.0\win10-x64\SnakeClient.dll">
       <PackagePath>SnakeClient.dll</PackagePath>
-      <Modified>2023-11-19T20:52:23.512</Modified>
+      <Modified>2023-11-19T22:55:34.932</Modified>
     </AppxPackagedFile>
     <AppxPackagedFile Include="C:\Users\emand\Source\Repos\game-maryfrost_game\SnakeClient\obj\Debug\net7.0-windows10.0.19041.0\win10-x64\apphost.exe">
       <PackagePath>SnakeClient.exe</PackagePath>
-      <Modified>2023-11-19T20:52:23.523</Modified>
+      <Modified>2023-11-19T22:55:34.943</Modified>
     </AppxPackagedFile>
     <AppxPackagedFile Include="C:\Users\emand\Source\Repos\game-maryfrost_game\SnakeClient\bin\Debug\net7.0-windows10.0.19041.0\win10-x64\SnakeClient.deps.json">
       <PackagePath>SnakeClient.deps.json</PackagePath>
-      <Modified>2023-11-17T21:10:22.658</Modified>
+      <Modified>2023-11-19T22:53:23.699</Modified>
     </AppxPackagedFile>
     <AppxPackagedFile Include="C:\Users\emand\.nuget\packages\microsoft.netcore.app.runtime.win-x64\7.0.11\runtimes\win-x64\lib\net7.0\Microsoft.CSharp.dll">
       <PackagePath>Microsoft.CSharp.dll</PackagePath>
@@ -931,7 +931,7 @@
     </AppxPackagedFile>
     <AppxPackagedFile Include="C:\Users\emand\Source\Repos\game-maryfrost_game\Model\bin\Debug\net7.0\Model.dll">
       <PackagePath>Model.dll</PackagePath>
-      <Modified>2023-11-19T20:52:16.313</Modified>
+      <Modified>2023-11-19T22:26:28.594</Modified>
     </AppxPackagedFile>
     <AppxPackagedFile Include="C:\Users\emand\Source\Repos\game-maryfrost_game\Vector2D\bin\Debug\net7.0\Vector2D.dll">
       <PackagePath>Vector2D.dll</PackagePath>
@@ -987,11 +987,47 @@
     </AppxPackagedFile>
     <AppxPackagedFile Include="C:\Users\emand\Source\Repos\game-maryfrost_game\SnakeClient\obj\Debug\net7.0-windows10.0.19041.0\win10-x64\resizetizer\r\background.scale-100.png">
       <PackagePath>background.scale-100.png</PackagePath>
-      <Modified>2023-11-17T20:38:02.090</Modified>
+      <Modified>2023-11-17T20:37:58.489</Modified>
+    </AppxPackagedFile>
+    <AppxPackagedFile Include="C:\Users\emand\Source\Repos\game-maryfrost_game\SnakeClient\obj\Debug\net7.0-windows10.0.19041.0\win10-x64\resizetizer\r\skelebody.scale-100.png">
+      <PackagePath>skelebody.scale-100.png</PackagePath>
+      <Modified>2023-11-19T21:26:02.972</Modified>
+    </AppxPackagedFile>
+    <AppxPackagedFile Include="C:\Users\emand\Source\Repos\game-maryfrost_game\SnakeClient\obj\Debug\net7.0-windows10.0.19041.0\win10-x64\resizetizer\r\skelebodydown.scale-100.png">
+      <PackagePath>skelebodydown.scale-100.png</PackagePath>
+      <Modified>2023-11-19T22:40:26.429</Modified>
+    </AppxPackagedFile>
+    <AppxPackagedFile Include="C:\Users\emand\Source\Repos\game-maryfrost_game\SnakeClient\obj\Debug\net7.0-windows10.0.19041.0\win10-x64\resizetizer\r\skelebodyup.scale-100.png">
+      <PackagePath>skelebodyup.scale-100.png</PackagePath>
+      <Modified>2023-11-19T21:26:02.972</Modified>
+    </AppxPackagedFile>
+    <AppxPackagedFile Include="C:\Users\emand\Source\Repos\game-maryfrost_game\SnakeClient\obj\Debug\net7.0-windows10.0.19041.0\win10-x64\resizetizer\r\skelehead.scale-100.png">
+      <PackagePath>skelehead.scale-100.png</PackagePath>
+      <Modified>2023-11-19T21:13:13.463</Modified>
+    </AppxPackagedFile>
+    <AppxPackagedFile Include="C:\Users\emand\Source\Repos\game-maryfrost_game\SnakeClient\obj\Debug\net7.0-windows10.0.19041.0\win10-x64\resizetizer\r\skeleheaddown.scale-100.png">
+      <PackagePath>skeleheaddown.scale-100.png</PackagePath>
+      <Modified>2023-11-19T21:13:13.463</Modified>
+    </AppxPackagedFile>
+    <AppxPackagedFile Include="C:\Users\emand\Source\Repos\game-maryfrost_game\SnakeClient\obj\Debug\net7.0-windows10.0.19041.0\win10-x64\resizetizer\r\skeleheadleft.scale-100.png">
+      <PackagePath>skeleheadleft.scale-100.png</PackagePath>
+      <Modified>2023-11-19T22:50:20.112</Modified>
+    </AppxPackagedFile>
+    <AppxPackagedFile Include="C:\Users\emand\Source\Repos\game-maryfrost_game\SnakeClient\obj\Debug\net7.0-windows10.0.19041.0\win10-x64\resizetizer\r\skeleheadright.scale-100.png">
+      <PackagePath>skeleheadright.scale-100.png</PackagePath>
+      <Modified>2023-11-19T22:50:13.563</Modified>
+    </AppxPackagedFile>
+    <AppxPackagedFile Include="C:\Users\emand\Source\Repos\game-maryfrost_game\SnakeClient\obj\Debug\net7.0-windows10.0.19041.0\win10-x64\resizetizer\r\skeleheadup.scale-100.png">
+      <PackagePath>skeleheadup.scale-100.png</PackagePath>
+      <Modified>2023-11-19T22:49:59.060</Modified>
+    </AppxPackagedFile>
+    <AppxPackagedFile Include="C:\Users\emand\Source\Repos\game-maryfrost_game\SnakeClient\obj\Debug\net7.0-windows10.0.19041.0\win10-x64\resizetizer\r\skeletail.scale-100.png">
+      <PackagePath>skeletail.scale-100.png</PackagePath>
+      <Modified>2023-11-19T21:07:06.059</Modified>
     </AppxPackagedFile>
     <AppxPackagedFile Include="C:\Users\emand\Source\Repos\game-maryfrost_game\SnakeClient\obj\Debug\net7.0-windows10.0.19041.0\win10-x64\resizetizer\r\wallsprite.scale-100.png">
       <PackagePath>wallsprite.scale-100.png</PackagePath>
-      <Modified>2023-11-17T20:38:02.090</Modified>
+      <Modified>2023-11-17T20:37:58.490</Modified>
     </AppxPackagedFile>
   </ItemGroup>
   <ItemGroup>

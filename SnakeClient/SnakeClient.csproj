@@ -52,6 +52,26 @@
 		<!-- Raw Assets (also remove the "Resources\Raw" prefix) -->
 		<MauiAsset Include="Resources\Raw\**" LogicalName="%(RecursiveDir)%(Filename)%(Extension)" />
 	</ItemGroup>
+	<ItemGroup>
+	  <MauiImage Remove="Resources\Images\skelebody.png" />
+	  <MauiImage Remove="Resources\Images\skelebodydown.png" />
+	  <MauiImage Remove="Resources\Images\skelebodyup.png" />
+	  <MauiImage Remove="Resources\Images\skelehead.png" />
+	  <MauiImage Remove="Resources\Images\skeleheaddown.png" />
+	  <MauiImage Remove="Resources\Images\skeleheadleft.png" />
+	  <MauiImage Remove="Resources\Images\skeleheadright.png" />
+	  <MauiImage Remove="Resources\Images\skeleheadup.png" />
+	  <MauiImage Remove="Resources\Images\skeletail.png" />
+	</ItemGroup>
+	<ItemGroup>
+	  <EmbeddedResource Include="Resources\Images\skelebodydown.png" />
+	  <EmbeddedResource Include="Resources\Images\skelebodyup.png" />
+	  <EmbeddedResource Include="Resources\Images\skeleheaddown.png" />
+	  <EmbeddedResource Include="Resources\Images\skeleheadleft.png" />
+	  <EmbeddedResource Include="Resources\Images\skeleheadright.png" />
+	  <EmbeddedResource Include="Resources\Images\skeleheadup.png" />
+	  <EmbeddedResource Include="Resources\Images\skeletail.png" />
+	</ItemGroup>
 
 	<ItemGroup>
 		<PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="7.0.0" />
