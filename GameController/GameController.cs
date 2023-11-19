@@ -22,6 +22,12 @@ public class GameController
     public delegate void ConnectionError();
     public event ConnectionError Error;
 
+    public delegate void SuccessfulConnection();
+    public event SuccessfulConnection Success;
+
+    public delegate void ServerClose();
+    public event ServerClose Closed;
+
     private string upCommand, downCommand, leftCommand, rightCommand, noneCommand;
 
     public GameController() 
@@ -81,9 +87,11 @@ public class GameController
     {
         if (state.ErrorOccurred)
         {
+            // If an error occurs during the connection process, display an error
             Error.Invoke();
             return;
         }
+        Success.Invoke();
         server = state;
         state.OnNetworkAction = ReceiveMessage;
         Networking.GetData(state);
@@ -99,6 +107,12 @@ public class GameController
 
     private void ProcessMessages(SocketState state)
     {
+        if (state.ErrorOccurred)
+        {
+            Closed.Invoke();
+            return;
+        }
+
         string totalData = state.GetData();
         string[] parts = Regex.Split(totalData, @"(?<=[\n])");
             

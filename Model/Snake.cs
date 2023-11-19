@@ -56,5 +56,45 @@ namespace Model
         {
             return segments;
         }
+
+        public string GetName()
+        {
+            return name;
+        }
+
+        public int GetScore()
+        {
+            return score;
+        }
+
+        public Vector2D GetHead()
+        {
+            return body[body.Count - 1];
+        }
+
+        public Vector2D GetTail()
+        {
+            return body[0];
+        }
+
+        public string GetDir()
+        {
+            if (dir.X == -1)
+            {
+                return "left";
+            }
+            else if (dir.X == 1)
+            {
+                return "right";
+            }
+            else if (dir.Y == -1)
+            {
+                return "up";
+            }
+            else
+            {
+                return "down";
+            }
+        }
     }
 }

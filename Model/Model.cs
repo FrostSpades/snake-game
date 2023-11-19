@@ -15,7 +15,7 @@ namespace Model
         private Dictionary<int, Powerup> powerups;
 
         private Snake? player;
-        private string snakeLock;
+        private string snakeLock, powerupLock, wallLock;
 
         public Model()
         {
@@ -24,6 +24,8 @@ namespace Model
             powerups = new();
             worldSize = 0;
             snakeLock = "snakeLock";
+            powerupLock = "powerupLock";
+            wallLock = "wallLock";
         }
 
         public void SetWorldSize(string size)
@@ -43,9 +45,12 @@ namespace Model
         {
             Wall? rebuilt = JsonSerializer.Deserialize<Wall>(wall);
 
-            if (rebuilt != null)
+            lock (wallLock)
             {
-                walls.Add(rebuilt.wall, rebuilt);
+                if (rebuilt != null)
+                {
+                    walls.Add(rebuilt.wall, rebuilt);
+                }
             }
         }
 
@@ -106,7 +111,7 @@ namespace Model
         {
             Powerup? rebuilt = JsonSerializer.Deserialize<Powerup>(powerup);
 
-            lock (powerups)
+            lock (powerupLock)
             {
                 if (rebuilt != null)
                 {
@@ -152,17 +157,33 @@ namespace Model
 
         public IEnumerable<Wall> GetWalls()
         {
-            return walls.Values;
+            lock (wallLock)
+            {
+                return walls.Values;
+            }
         }
 
         public IEnumerable<Powerup> GetPowerups()
         {
-            return powerups.Values;
+            lock (powerupLock)
+            {
+                return powerups.Values;
+            }
         }
 
         public string GetSnakeLock()
         {
             return snakeLock;
+        }
+
+        public string GetPowerupLock()
+        {
+            return powerupLock;
+        }
+
+        public string GetWallLock()
+        {
+            return wallLock;
         }
     }
 }

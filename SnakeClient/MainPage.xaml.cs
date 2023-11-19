@@ -10,6 +10,8 @@ public partial class MainPage : ContentPage
         controller = new GameController();
         controller.GameUpdate += OnFrame;
         controller.Error += ConnectionError;
+        controller.Success += ConnectionSuccess;
+        controller.Closed += Exit;
         InitializeComponent();
 
         worldPanel.SetModel(controller.GetModel());
@@ -19,7 +21,17 @@ public partial class MainPage : ContentPage
     
     void ConnectionError()
     {
-        DisplayAlert("Error", "Error", "Close");
+        DisplayAlert("Error", "Unable to connect to server", "Close");
+    }
+
+    void ConnectionSuccess()
+    {
+        Dispatcher.Dispatch(() => connectButton.IsEnabled = false);
+    }
+
+    void Exit()
+    {
+        Dispatcher.Dispatch(() => App.Current.Quit());
     }
 
     void OnTapped(object sender, EventArgs args)
