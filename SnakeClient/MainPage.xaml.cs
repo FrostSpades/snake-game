@@ -1,17 +1,30 @@
-﻿namespace SnakeGame;
+﻿// Authors: Ethan Andrews and Mary Garfield
+// Mainpage of the application
+// University of Utah
+namespace SnakeGame;
 using GameController;
 using Microsoft.UI.Xaml.Controls;
 
+/// <summary>
+/// Class for representing the main page of the maui application.
+/// </summary>
 public partial class MainPage : ContentPage
 {
     GameController controller;
+
+    /// <summary>
+    /// Default constructor
+    /// </summary>
     public MainPage()
     {
         controller = new GameController();
+
+        // Register the controller events
         controller.GameUpdate += OnFrame;
         controller.Error += ConnectionError;
         controller.Success += ConnectionSuccess;
         controller.Closed += Exit;
+
         InitializeComponent();
 
         worldPanel.SetModel(controller.GetModel());
@@ -19,30 +32,51 @@ public partial class MainPage : ContentPage
         graphicsView.Invalidate();
     }
     
+    /// <summary>
+    /// If there is a connection error, display an error.
+    /// </summary>
     void ConnectionError()
     {
         DisplayAlert("Error", "Unable to connect to server", "Close");
     }
 
+    /// <summary>
+    /// If the connection was successful, disable the connection button
+    /// </summary>
     void ConnectionSuccess()
     {
         Dispatcher.Dispatch(() => connectButton.IsEnabled = false);
     }
 
+    /// <summary>
+    /// If there was an error after the connection process, quit the app
+    /// </summary>
     void Exit()
     {
         Dispatcher.Dispatch(() => App.Current.Quit());
     }
 
+    /// <summary>
+    /// Resets the keyboard focus.
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="args"></param>
     void OnTapped(object sender, EventArgs args)
     {
         keyboardHack.Focus();
     }
 
+    /// <summary>
+    /// Sends controls to the controller on keyboard input.
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="args"></param>
     void OnTextChanged(object sender, EventArgs args)
     {
         Entry entry = (Entry)sender;
         String text = entry.Text.ToLower();
+
+        // Sends the text to the controller
         if (text == "w")
         {
             controller.Move("up");
@@ -104,6 +138,11 @@ public partial class MainPage : ContentPage
         Dispatcher.Dispatch(() => graphicsView.Invalidate());
     }
 
+    /// <summary>
+    /// Displays the controls.
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
     private void ControlsButton_Clicked(object sender, EventArgs e)
     {
         DisplayAlert("Controls",
@@ -114,14 +153,24 @@ public partial class MainPage : ContentPage
                      "OK");
     }
 
+    /// <summary>
+    /// Displays about dialogue.
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
     private void AboutButton_Clicked(object sender, EventArgs e)
     {
         DisplayAlert("About",
       "SnakeGame solution\nArtwork by Jolie Uk and Alex Smith\nGame design by Daniel Kopta and Travis Martin\n" +
-      "Implementation by ...\n" +
+      "Implementation by Ethan Andrews and Mary Garfield\n" +
         "CS 3500 Fall 2022, University of Utah", "OK");
     }
 
+    /// <summary>
+    /// Returns focus to the content page.
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
     private void ContentPage_Focused(object sender, FocusEventArgs e)
     {
         if (!connectButton.IsEnabled)

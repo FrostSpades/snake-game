@@ -1,4 +1,7 @@
-﻿namespace SnakeGame;
+﻿// Authors: Ethan Andrews and Mary Garfield
+// Drawing panel for snake game.
+// University of Utah
+namespace SnakeGame;
 
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -19,15 +22,25 @@ using Model;
 using Newtonsoft.Json.Serialization;
 using Microsoft.Maui.Graphics;
 
+/// <summary>
+/// Drawing panel for the maui application.
+/// </summary>
 public class WorldPanel : IDrawable
 {
     private IImage wall;
     private IImage background;
-    private IImage skeleTail, skeleHeadUp, skeleHeadDown, skeleHeadRight, skeleHeadLeft, skeleBodyUp, skeleBodyDown;
-    private Model model;
 
+    // Snake skeleton images
+    private IImage skeleTail, skeleHeadUp, skeleHeadDown, skeleHeadRight, skeleHeadLeft, skeleBodyUp, skeleBodyDown;
+    
+    private Model model;
     private bool initializedForDrawing = false;
 
+    /// <summary>
+    /// Loads the given image from SnakeClient\Resources\Images given an image name
+    /// </summary>
+    /// <param name="name"></param>
+    /// <returns></returns>
     private IImage loadImage(string name)
     {
         Assembly assembly = GetType().GetTypeInfo().Assembly;
@@ -42,15 +55,25 @@ public class WorldPanel : IDrawable
         }
     }
 
+    /// <summary>
+    /// Default constructor.
+    /// </summary>
     public WorldPanel()
     {
     }
 
+    /// <summary>
+    /// Sets the model
+    /// </summary>
+    /// <param name="model"></param>
     public void SetModel(Model model)
     {
         this.model = model;
     }
 
+    /// <summary>
+    /// Initializes the images.
+    /// </summary>
     private void InitializeDrawing()
     {
         wall = loadImage( "wallsprite.png" );
@@ -65,6 +88,11 @@ public class WorldPanel : IDrawable
         initializedForDrawing = true;
     }
 
+    /// <summary>
+    /// Redraws the panel.
+    /// </summary>
+    /// <param name="canvas"></param>
+    /// <param name="dirtyRect"></param>
     public void Draw(ICanvas canvas, RectF dirtyRect)
     {
         if ( !initializedForDrawing )
@@ -73,15 +101,17 @@ public class WorldPanel : IDrawable
         // undo previous transformations from last frame
         canvas.ResetState();
 
-        int viewSize = 1000;
+        // Set the view size
+        int viewSize = model.GetWorldSize() / 2;
+        
+        // Get the snake head location
         Vector2D head;
-
         lock (model.GetSnakeLock())
         {
             head = model.GetHead();
         }
         
-
+        // Set the canvas to move with the head
         if (head != null)
         {
             float playerX = (float)head.GetX();
@@ -90,16 +120,18 @@ public class WorldPanel : IDrawable
             canvas.Translate(-playerX + (viewSize / 2), -playerY + (viewSize / 2));
         }
 
+        // Draws the background
         if (model.GetWorldSize() != 0)
         {
             canvas.DrawImage(background, (-model.GetWorldSize() / 2), (-model.GetWorldSize() / 2), model.GetWorldSize(), model.GetWorldSize());
         }
         
-
+        // Gets the game objects
         IEnumerable<Wall> walls = model.GetWalls();
         IEnumerable<Powerup> powerups = model.GetPowerups();
         IEnumerable<Snake> snakes = model.GetSnakes();
 
+        // Draws the walls
         lock (model.GetWallLock())
         {
             foreach (Wall w in walls)
@@ -111,18 +143,20 @@ public class WorldPanel : IDrawable
             }
         }
 
+        // Draws the snakes
         lock (model.GetSnakeLock())
         {
             DrawSnakes(canvas, dirtyRect, snakes);
         }
 
+        // Draws the powerups
         lock (model.GetPowerupLock())
         {
             foreach (Powerup p in powerups)
             {
                 Vector2D loc = p.GetLocation();
                 canvas.StrokeColor = Color.FromArgb("FFFF0000");
-                canvas.StrokeSize = 10;
+                canvas.StrokeSize = 6;
                 canvas.StrokeLineCap = LineCap.Round;
                 canvas.DrawCircle((int)loc.GetX(), (int)loc.GetY(), 4);
             }
@@ -130,14 +164,22 @@ public class WorldPanel : IDrawable
         
     }
 
-    public void DrawSnakes(ICanvas canvas, RectF dirtyRect, IEnumerable<Snake> snakes)
+    /// <summary>
+    /// Helper method for drawing snakes
+    /// </summary>
+    /// <param name="canvas"></param>
+    /// <param name="dirtyRect"></param>
+    /// <param name="snakes"></param>
+    private void DrawSnakes(ICanvas canvas, RectF dirtyRect, IEnumerable<Snake> snakes)
     {
         foreach (Snake s in snakes)
         {
+            // Determines which color the snake is drawn as
             int remainder = s.snake % 10;
 
             if (s.alive)
             {
+                // Given the remainder, choose a color
                 switch (remainder)
                 {
                     case 0:
@@ -172,6 +214,7 @@ public class WorldPanel : IDrawable
                         break;
                 }
 
+                // Draw the snake
                 canvas.StrokeSize = 10;
                 canvas.StrokeLineCap = LineCap.Round;
                 foreach (Tuple<float, float, float, float> segment in s.GetSegments())
@@ -179,14 +222,17 @@ public class WorldPanel : IDrawable
                     canvas.DrawLine(segment.Item1, segment.Item2, segment.Item3, segment.Item4);
                 }
 
+                // Draw the player name and score
                 canvas.StrokeColor = Color.FromArgb("#FFFFFFFF");
 
                 Vector2D sHead = s.GetHead();
                 canvas.DrawString(s.GetName() + ": " + s.GetScore().ToString(), (float)sHead.GetX(), (float)sHead.GetY() + 13, HorizontalAlignment.Center);
             }
 
+            // If snake is dead, draw a skeleton
             else
             {
+                // Draw spine for each segment
                 foreach (Tuple<float, float, float, float> segment in s.GetSegments())
                 {
                     if (segment.Item1 == segment.Item3)
@@ -211,31 +257,31 @@ public class WorldPanel : IDrawable
                             canvas.DrawImage(skeleBodyDown, segment.Item3, segment.Item4, segment.Item1 - segment.Item3, 11);
                         }
                     }
-
-                    Vector2D head = s.GetHead();
-                    string dir = s.GetDir();
-
-                    if (dir == "up")
-                    {
-                        canvas.DrawImage(skeleHeadUp, (float)head.GetX() - 2, (float)head.GetY(), 15, 15);
-                    }
-                    else if (dir == "down")
-                    {
-                        canvas.DrawImage(skeleHeadDown, (float)head.GetX() - 2, (float)head.GetY(), 15, 15);
-                    }
-                    else if (dir == "left")
-                    {
-                        canvas.DrawImage(skeleHeadLeft, (float)head.GetX(), (float)head.GetY() - 2, 15, 15);
-                    }
-                    else if (dir == "right")
-                    {
-                        canvas.DrawImage(skeleHeadRight, (float)head.GetX(), (float)head.GetY() - 2, 15, 15);
-                    }
                 }
+
+                // Draws the skeleton head of the snake
+                Vector2D head = s.GetHead();
+                string dir = s.GetDir();
+
+                // Change the rotation of the image based on the direction
+                if (dir == "up")
+                {
+                    canvas.DrawImage(skeleHeadUp, (float)head.GetX() - 2, (float)head.GetY(), 15, 15);
+                }
+                else if (dir == "down")
+                {
+                    canvas.DrawImage(skeleHeadDown, (float)head.GetX() - 2, (float)head.GetY(), 15, 15);
+                }
+                else if (dir == "left")
+                {
+                    canvas.DrawImage(skeleHeadLeft, (float)head.GetX(), (float)head.GetY() - 2, 15, 15);
+                }
+                else if (dir == "right")
+                {
+                    canvas.DrawImage(skeleHeadRight, (float)head.GetX(), (float)head.GetY() - 2, 15, 15);
+                }
+                
             }
-
-
-            
         }
     }
 

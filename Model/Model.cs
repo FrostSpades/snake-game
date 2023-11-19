@@ -1,4 +1,8 @@
-﻿using SnakeGame;
+﻿// Authors: Ethan Andrews and Mary Garfield
+// Model for storing objects.
+// University of Utah
+
+using SnakeGame;
 using System.Collections.Immutable;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
@@ -7,17 +11,31 @@ using System.Xml.Linq;
 
 namespace Model
 {
+    /// <summary>
+    /// Class for storing objects for the snake game.
+    /// </summary>
     public class Model
     {
+        // ID of the player snake
         private int snakeID;
+        
+        // Size of the world
         private int worldSize;
+
+        // Hash sets for storing the game objects
         private Dictionary<int, Wall> walls;
         private Dictionary<int, Snake> snakes;
         private Dictionary<int, Powerup> powerups;
 
+        // Snake object of the player
         private Snake? player;
+
+        // Common objects to use in lock statements
         private string snakeLock, powerupLock, wallLock;
 
+        /// <summary>
+        /// Default constructor.
+        /// </summary>
         public Model()
         {
             walls = new();
@@ -29,6 +47,10 @@ namespace Model
             wallLock = "wallLock";
         }
 
+        /// <summary>
+        /// Set the world size given an input string.
+        /// </summary>
+        /// <param name="size"></param>
         public void SetWorldSize(string size)
         {
             if (int.TryParse(size, out int n))
@@ -37,11 +59,19 @@ namespace Model
             }
         }
 
+        /// <summary>
+        /// Returns the world size
+        /// </summary>
+        /// <returns></returns>
         public int GetWorldSize()
         {
             return worldSize;
         }
 
+        /// <summary>
+        /// Adds a wall object to the game given a json string.
+        /// </summary>
+        /// <param name="wall"></param>
         public void AddWall(string wall)
         {
             Wall? rebuilt = JsonSerializer.Deserialize<Wall>(wall);
@@ -55,6 +85,10 @@ namespace Model
             }
         }
 
+        /// <summary>
+        /// Adds a snake object to the game given a json string.
+        /// </summary>
+        /// <param name="snake"></param>
         public void AddSnake(string snake)
         {
             Snake? rebuilt = JsonSerializer.Deserialize<Snake>(snake);
@@ -63,6 +97,7 @@ namespace Model
             {
                 if (rebuilt != null)
                 {
+                    // If the snake id is already in the dict, replace existing snake
                     if (snakes.ContainsKey(rebuilt.snake))
                     {
                         if (rebuilt.dc)
@@ -75,6 +110,8 @@ namespace Model
                         }
                         
                     }
+
+                    // If snake id is not yet already in dict, add it
                     else
                     {
                         if (!rebuilt.dc)
@@ -83,6 +120,7 @@ namespace Model
                         }
                     }
 
+                    // Set player equal to the most current snake with the same snake id
                     if (rebuilt.snake == snakeID)
                     {
                         player = rebuilt;
@@ -92,6 +130,10 @@ namespace Model
             
         }
 
+        /// <summary>
+        /// Return the Vector2D of the head
+        /// </summary>
+        /// <returns></returns>
         public Vector2D? GetHead()
         {
             lock (snakeLock)
@@ -108,6 +150,10 @@ namespace Model
             }
         }
 
+        /// <summary>
+        /// Add a powerup to the game.
+        /// </summary>
+        /// <param name="powerup"></param>
         public void AddPowerup(string powerup)
         {
             Powerup? rebuilt = JsonSerializer.Deserialize<Powerup>(powerup);
@@ -116,8 +162,10 @@ namespace Model
             {
                 if (rebuilt != null)
                 {
+                    // Replace object in dict if already contains
                     if (powerups.ContainsKey(rebuilt.power))
                     {
+                        // If died, remove it from dictionary
                         if (rebuilt.died)
                         {
                             powerups.Remove(rebuilt.power);
@@ -127,6 +175,7 @@ namespace Model
                             powerups[rebuilt.power] = rebuilt;
                         }
                     }
+                    // Add to dict if not yet contains and is not dead
                     else
                     {
                         if (!rebuilt.died)
@@ -139,6 +188,10 @@ namespace Model
             
         }
 
+        /// <summary>
+        /// Sets the id of the player
+        /// </summary>
+        /// <param name="id"></param>
         public void SetID(string id)
         {
             if (int.TryParse(id, out int n))
@@ -147,6 +200,10 @@ namespace Model
             }
         }
 
+        /// <summary>
+        /// Returns the snakes
+        /// </summary>
+        /// <returns></returns>
         public IEnumerable<Snake> GetSnakes()
         {
             lock (snakeLock)
@@ -156,6 +213,10 @@ namespace Model
             
         }
 
+        /// <summary>
+        /// Returns the walls
+        /// </summary>
+        /// <returns></returns>
         public IEnumerable<Wall> GetWalls()
         {
             lock (wallLock)
@@ -164,6 +225,10 @@ namespace Model
             }
         }
 
+        /// <summary>
+        /// Returns the powerups
+        /// </summary>
+        /// <returns></returns>
         public IEnumerable<Powerup> GetPowerups()
         {
             lock (powerupLock)
@@ -172,16 +237,28 @@ namespace Model
             }
         }
 
+        /// <summary>
+        /// Returns the snake lock for locking snakes
+        /// </summary>
+        /// <returns></returns>
         public string GetSnakeLock()
         {
             return snakeLock;
         }
 
+        /// <summary>
+        /// Returns the powerup lock for locking powerups
+        /// </summary>
+        /// <returns></returns>
         public string GetPowerupLock()
         {
             return powerupLock;
         }
 
+        /// <summary>
+        /// Returns the wall lock for locking walls
+        /// </summary>
+        /// <returns></returns>
         public string GetWallLock()
         {
             return wallLock;
