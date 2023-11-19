@@ -2005,24 +2005,24 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\emand\\.nuget\\packages\\": {},
+    "C:\\Users\\mhgar\\.nuget\\packages\\": {},
     "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\emand\\Source\\Repos\\game-maryfrost_game\\SnakeClient\\SnakeClient.csproj",
+      "projectUniqueName": "C:\\Users\\mhgar\\Source\\Repos\\game-maryfrost_game\\SnakeClient\\SnakeClient.csproj",
       "projectName": "SnakeClient",
-      "projectPath": "C:\\Users\\emand\\Source\\Repos\\game-maryfrost_game\\SnakeClient\\SnakeClient.csproj",
-      "packagesPath": "C:\\Users\\emand\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\emand\\Source\\Repos\\game-maryfrost_game\\SnakeClient\\obj\\",
+      "projectPath": "C:\\Users\\mhgar\\Source\\Repos\\game-maryfrost_game\\SnakeClient\\SnakeClient.csproj",
+      "packagesPath": "C:\\Users\\mhgar\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\mhgar\\Source\\Repos\\game-maryfrost_game\\SnakeClient\\obj\\",
       "projectStyle": "PackageReference",
       "crossTargeting": true,
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
       ],
       "configFilePaths": [
-        "C:\\Users\\emand\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\mhgar\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
@@ -2038,11 +2038,11 @@
         "net7.0-windows10.0.19041": {
           "targetAlias": "net7.0-windows10.0.19041.0",
           "projectReferences": {
-            "C:\\Users\\emand\\Source\\Repos\\game-maryfrost_game\\GameController\\GameController.csproj": {
-              "projectPath": "C:\\Users\\emand\\Source\\Repos\\game-maryfrost_game\\GameController\\GameController.csproj"
+            "C:\\Users\\mhgar\\Source\\Repos\\game-maryfrost_game\\GameController\\GameController.csproj": {
+              "projectPath": "C:\\Users\\mhgar\\Source\\Repos\\game-maryfrost_game\\GameController\\GameController.csproj"
             },
-            "C:\\Users\\emand\\Source\\Repos\\game-maryfrost_game\\Model\\Model.csproj": {
-              "projectPath": "C:\\Users\\emand\\Source\\Repos\\game-maryfrost_game\\Model\\Model.csproj"
+            "C:\\Users\\mhgar\\Source\\Repos\\game-maryfrost_game\\Model\\Model.csproj": {
+              "projectPath": "C:\\Users\\mhgar\\Source\\Repos\\game-maryfrost_game\\Model\\Model.csproj"
             }
           }
         }
@@ -2111,11 +2111,11 @@
         "downloadDependencies": [
           {
             "name": "Microsoft.AspNetCore.App.Runtime.win-x64",
-            "version": "[7.0.11, 7.0.11]"
+            "version": "[7.0.10, 7.0.10]"
           },
           {
             "name": "Microsoft.NETCore.App.Runtime.win-x64",
-            "version": "[7.0.11, 7.0.11]"
+            "version": "[7.0.10, 7.0.10]"
           },
           {
             "name": "Microsoft.Windows.SDK.NET.Ref",
@@ -2123,7 +2123,7 @@
           },
           {
             "name": "Microsoft.WindowsDesktop.App.Runtime.win-x64",
-            "version": "[7.0.11, 7.0.11]"
+            "version": "[7.0.10, 7.0.10]"
           }
         ],
         "frameworkReferences": {
@@ -2143,7 +2143,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.401\\RuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.400\\RuntimeIdentifierGraph.json"
       }
     },
     "runtimes": {
