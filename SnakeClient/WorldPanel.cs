@@ -31,7 +31,7 @@ public class WorldPanel : IDrawable
     private IImage background;
 
     // Snake skeleton images
-    private IImage skeleTail, skeleHeadUp, skeleHeadDown, skeleHeadRight, skeleHeadLeft, skeleBodyUp, skeleBodyDown;
+    private IImage skeleHeadUp, skeleHeadDown, skeleHeadRight, skeleHeadLeft, skeleBodyUp, skeleBodyDown;
     
     private Model model;
     private bool initializedForDrawing = false;
@@ -82,7 +82,6 @@ public class WorldPanel : IDrawable
         skeleHeadDown = loadImage("skeleheaddown.png");
         skeleHeadLeft = loadImage("skeleheadleft.png");
         skeleHeadRight = loadImage("skeleheadright.png");
-        skeleTail = loadImage("skeletail.png");
         skeleBodyUp = loadImage("skelebodyup.png");
         skeleBodyDown = loadImage("skelebodydown.png");
         initializedForDrawing = true;
