@@ -22,6 +22,8 @@ public class GameController
     private int phase;
     private SocketState? server;
 
+    private Queue<string> actionQueue;
+
     // Event handler for when the view needs to update
     public delegate void GameUpdateHandler();
     public event GameUpdateHandler? GameUpdate;
@@ -49,6 +51,8 @@ public class GameController
         model = new();
         phase = 0;
 
+        actionQueue = new();
+
         upCommand = JsonSerializer.Serialize(new ControlCommand("up"));
         downCommand = JsonSerializer.Serialize(new ControlCommand("down"));
         leftCommand = JsonSerializer.Serialize(new ControlCommand("left"));
@@ -65,11 +69,16 @@ public class GameController
         return model;
     }
 
+    public void AddMovement(string movement)
+    {
+        actionQueue.Enqueue(movement);
+    }
+
     /// <summary>
     /// Sends move instructions to the server based on input direction.
     /// </summary>
     /// <param name="direction"></param>
-    public void Move(string direction)
+    private void Move(string direction)
     {
         // If server is null, don't do anything.
         if (server == null)
@@ -141,7 +150,10 @@ public class GameController
     /// <param name="state"></param>
     private void ReceiveMessage(SocketState state) 
     { 
-        ProcessMessages(state);
+        lock (model)
+        {
+            ProcessMessages(state);
+        }
         Networking.GetData(state);
 
     }
@@ -227,6 +239,13 @@ public class GameController
 
             // Remove the data from the buffer
             state.RemoveData(0, p.Length);
+        }
+
+        while (actionQueue.Count != 0)
+        {
+            string movement = actionQueue.Dequeue();
+
+            Move(movement);
         }
 
         // Tell view to redraw

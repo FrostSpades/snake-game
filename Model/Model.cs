@@ -30,9 +30,6 @@ namespace Model
         // Snake object of the player
         private Snake? player;
 
-        // Common objects to use in lock statements
-        private string snakeLock, powerupLock, wallLock;
-
         /// <summary>
         /// Default constructor.
         /// </summary>
@@ -42,9 +39,6 @@ namespace Model
             snakes = new();
             powerups = new();
             worldSize = 0;
-            snakeLock = "snakeLock";
-            powerupLock = "powerupLock";
-            wallLock = "wallLock";
         }
 
         /// <summary>
@@ -76,12 +70,10 @@ namespace Model
         {
             Wall? rebuilt = JsonSerializer.Deserialize<Wall>(wall);
 
-            lock (wallLock)
+            
+            if (rebuilt != null)
             {
-                if (rebuilt != null)
-                {
-                    walls.Add(rebuilt.wall, rebuilt);
-                }
+                walls.Add(rebuilt.wall, rebuilt);
             }
         }
 
@@ -93,38 +85,35 @@ namespace Model
         {
             Snake? rebuilt = JsonSerializer.Deserialize<Snake>(snake);
 
-            lock (snakeLock)
+            if (rebuilt != null)
             {
-                if (rebuilt != null)
+                // If the snake id is already in the dict, replace existing snake
+                if (snakes.ContainsKey(rebuilt.snake))
                 {
-                    // If the snake id is already in the dict, replace existing snake
-                    if (snakes.ContainsKey(rebuilt.snake))
+                    if (rebuilt.dc)
                     {
-                        if (rebuilt.dc)
-                        {
-                            snakes.Remove(rebuilt.snake);
-                        }
-                        else
-                        {
-                            snakes[rebuilt.snake] = rebuilt;
-                        }
-                        
+                        snakes.Remove(rebuilt.snake);
                     }
-
-                    // If snake id is not yet already in dict, add it
                     else
                     {
-                        if (!rebuilt.dc)
-                        {
-                            snakes.Add(rebuilt.snake, rebuilt);
-                        }
+                        snakes[rebuilt.snake] = rebuilt;
                     }
+                        
+                }
 
-                    // Set player equal to the most current snake with the same snake id
-                    if (rebuilt.snake == snakeID)
+                // If snake id is not yet already in dict, add it
+                else
+                {
+                    if (!rebuilt.dc)
                     {
-                        player = rebuilt;
+                        snakes.Add(rebuilt.snake, rebuilt);
                     }
+                }
+
+                // Set player equal to the most current snake with the same snake id
+                if (rebuilt.snake == snakeID)
+                {
+                    player = rebuilt;
                 }
             }
             
@@ -136,17 +125,14 @@ namespace Model
         /// <returns></returns>
         public Vector2D? GetHead()
         {
-            lock (snakeLock)
+            if (player == null)
             {
-                if (player == null)
-                {
-                    return null;
-                }
+                return null;
+            }
 
-                else
-                {
-                    return player.body[player.body.Count - 1];
-                }
+            else
+            {
+                return player.body[player.body.Count - 1];
             }
         }
 
@@ -158,30 +144,27 @@ namespace Model
         {
             Powerup? rebuilt = JsonSerializer.Deserialize<Powerup>(powerup);
 
-            lock (powerupLock)
+            if (rebuilt != null)
             {
-                if (rebuilt != null)
+                // Replace object in dict if already contains
+                if (powerups.ContainsKey(rebuilt.power))
                 {
-                    // Replace object in dict if already contains
-                    if (powerups.ContainsKey(rebuilt.power))
+                    // If died, remove it from dictionary
+                    if (rebuilt.died)
                     {
-                        // If died, remove it from dictionary
-                        if (rebuilt.died)
-                        {
-                            powerups.Remove(rebuilt.power);
-                        }
-                        else
-                        {
-                            powerups[rebuilt.power] = rebuilt;
-                        }
+                        powerups.Remove(rebuilt.power);
                     }
-                    // Add to dict if not yet contains and is not dead
                     else
                     {
-                        if (!rebuilt.died)
-                        {
-                            powerups.Add(rebuilt.power, rebuilt);
-                        }
+                        powerups[rebuilt.power] = rebuilt;
+                    }
+                }
+                // Add to dict if not yet contains and is not dead
+                else
+                {
+                    if (!rebuilt.died)
+                    {
+                        powerups.Add(rebuilt.power, rebuilt);
                     }
                 }
             }
@@ -206,10 +189,7 @@ namespace Model
         /// <returns></returns>
         public IEnumerable<Snake> GetSnakes()
         {
-            lock (snakeLock)
-            {
-                return snakes.Values;
-            }
+            return snakes.Values;
             
         }
 
@@ -219,10 +199,7 @@ namespace Model
         /// <returns></returns>
         public IEnumerable<Wall> GetWalls()
         {
-            lock (wallLock)
-            {
-                return walls.Values;
-            }
+            return walls.Values;
         }
 
         /// <summary>
@@ -231,37 +208,7 @@ namespace Model
         /// <returns></returns>
         public IEnumerable<Powerup> GetPowerups()
         {
-            lock (powerupLock)
-            {
-                return powerups.Values;
-            }
-        }
-
-        /// <summary>
-        /// Returns the snake lock for locking snakes
-        /// </summary>
-        /// <returns></returns>
-        public string GetSnakeLock()
-        {
-            return snakeLock;
-        }
-
-        /// <summary>
-        /// Returns the powerup lock for locking powerups
-        /// </summary>
-        /// <returns></returns>
-        public string GetPowerupLock()
-        {
-            return powerupLock;
-        }
-
-        /// <summary>
-        /// Returns the wall lock for locking walls
-        /// </summary>
-        /// <returns></returns>
-        public string GetWallLock()
-        {
-            return wallLock;
+            return powerups.Values;
         }
     }
 }

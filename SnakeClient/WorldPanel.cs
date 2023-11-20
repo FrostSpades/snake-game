@@ -104,36 +104,33 @@ public class WorldPanel : IDrawable
         // Set the view size
         int viewSize = model.GetWorldSize() / 2;
         
-        // Get the snake head location
-        Vector2D head;
-        lock (model.GetSnakeLock())
+        lock (model)
         {
+            // Get the snake head location
+            Vector2D head;
             head = model.GetHead();
-        }
-        
-        // Set the canvas to move with the head
-        if (head != null)
-        {
-            float playerX = (float)head.GetX();
-            float playerY = (float)head.GetY();
 
-            canvas.Translate(-playerX + (viewSize / 2), -playerY + (viewSize / 2));
-        }
+            // Set the canvas to move with the head
+            if (head != null)
+            {
+                float playerX = (float)head.GetX();
+                float playerY = (float)head.GetY();
 
-        // Draws the background
-        if (model.GetWorldSize() != 0)
-        {
-            canvas.DrawImage(background, (-model.GetWorldSize() / 2), (-model.GetWorldSize() / 2), model.GetWorldSize(), model.GetWorldSize());
-        }
-        
-        // Gets the game objects
-        IEnumerable<Wall> walls = model.GetWalls();
-        IEnumerable<Powerup> powerups = model.GetPowerups();
-        IEnumerable<Snake> snakes = model.GetSnakes();
+                canvas.Translate(-playerX + (viewSize / 2), -playerY + (viewSize / 2));
+            }
 
-        // Draws the walls
-        lock (model.GetWallLock())
-        {
+            // Draws the background
+            if (model.GetWorldSize() != 0)
+            {
+                canvas.DrawImage(background, (-model.GetWorldSize() / 2), (-model.GetWorldSize() / 2), model.GetWorldSize(), model.GetWorldSize());
+            }
+
+            // Gets the game objects
+            IEnumerable<Wall> walls = model.GetWalls();
+            IEnumerable<Powerup> powerups = model.GetPowerups();
+            IEnumerable<Snake> snakes = model.GetSnakes();
+
+            // Draws the walls
             foreach (Wall w in walls)
             {
                 foreach (Tuple<double, double> segment in w.GetSegments())
@@ -141,17 +138,11 @@ public class WorldPanel : IDrawable
                     canvas.DrawImage(wall, (float)segment.Item1, (float)segment.Item2, 50, 50);
                 }
             }
-        }
 
-        // Draws the snakes
-        lock (model.GetSnakeLock())
-        {
+            // Draws the snakes
             DrawSnakes(canvas, dirtyRect, snakes);
-        }
 
-        // Draws the powerups
-        lock (model.GetPowerupLock())
-        {
+            // Draws the powerups
             foreach (Powerup p in powerups)
             {
                 Vector2D loc = p.GetLocation();
@@ -161,7 +152,6 @@ public class WorldPanel : IDrawable
                 canvas.DrawCircle((int)loc.GetX(), (int)loc.GetY(), 4);
             }
         }
-        
     }
 
     /// <summary>

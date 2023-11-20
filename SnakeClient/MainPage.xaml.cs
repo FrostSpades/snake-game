@@ -79,19 +79,19 @@ public partial class MainPage : ContentPage
         // Sends the text to the controller
         if (text == "w")
         {
-            controller.Move("up");
+            controller.AddMovement("up");
         }
         else if (text == "a")
         {
-            controller.Move("left");
+            controller.AddMovement("left");
         }
         else if (text == "s")
         {
-            controller.Move("down");
+            controller.AddMovement("down");
         }
         else if (text == "d")
         {
-            controller.Move("right");
+            controller.AddMovement("right");
         }
         entry.Text = "";
     }
