@@ -132,7 +132,7 @@ public class GameController
         server = state;
         state.OnNetworkAction = ReceiveMessage;
         Networking.GetData(state);
-        Networking.Send(server.TheSocket, name);
+        Networking.Send(server.TheSocket, name + "\n");
     }
     
     /// <summary>

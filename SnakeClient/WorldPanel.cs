@@ -237,24 +237,28 @@ public class WorldPanel : IDrawable
                 {
                     if (segment.Item1 == segment.Item3)
                     {
+                        // If segment is facing to the up
                         if (segment.Item4 > segment.Item2)
                         {
-                            canvas.DrawImage(skeleBodyUp, segment.Item1, segment.Item2, 11, segment.Item4 - segment.Item2);
+                            canvas.DrawImage(skeleBodyUp, segment.Item1, segment.Item2, 11, segment.Item4 - segment.Item2 + 7);
                         }
+                        // If segment is facing down
                         else
                         {
-                            canvas.DrawImage(skeleBodyUp, segment.Item3, segment.Item4, 11, segment.Item2 - segment.Item4);
+                            canvas.DrawImage(skeleBodyUp, segment.Item3, segment.Item4, 11, segment.Item2 - segment.Item4 + 3);
                         }
                     }
                     else
                     {
+                        // If segment is facing right
                         if (segment.Item3 > segment.Item1)
                         {
-                            canvas.DrawImage(skeleBodyDown, segment.Item1, segment.Item2, segment.Item3 - segment.Item1, 11);
+                            canvas.DrawImage(skeleBodyDown, segment.Item1, segment.Item2, segment.Item3 - segment.Item1 + 7, 11);
                         }
+                        // If segment is facing left
                         else
                         {
-                            canvas.DrawImage(skeleBodyDown, segment.Item3, segment.Item4, segment.Item1 - segment.Item3, 11);
+                            canvas.DrawImage(skeleBodyDown, segment.Item3, segment.Item4, segment.Item1 - segment.Item3 + 3, 11);
                         }
                     }
                 }
