@@ -53,7 +53,7 @@ public partial class MainPage : ContentPage
     /// </summary>
     void Exit()
     {
-        Dispatcher.Dispatch(() => App.Current.Quit());
+        Dispatcher.Dispatch(() => App.Current!.Quit());
     }
 
     /// <summary>

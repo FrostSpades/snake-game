@@ -217,7 +217,6 @@ C:\Users\emand\Source\Repos\game-maryfrost_game\SnakeClient\bin\Debug\net7.0-win
 C:\Users\emand\Source\Repos\game-maryfrost_game\SnakeClient\bin\Debug\net7.0-windows10.0.19041.0\win10-x64\hostfxr.dll
 C:\Users\emand\Source\Repos\game-maryfrost_game\SnakeClient\bin\Debug\net7.0-windows10.0.19041.0\win10-x64\hostpolicy.dll
 C:\Users\emand\Source\Repos\game-maryfrost_game\SnakeClient\bin\Debug\net7.0-windows10.0.19041.0\win10-x64\mscordaccore.dll
-C:\Users\emand\Source\Repos\game-maryfrost_game\SnakeClient\bin\Debug\net7.0-windows10.0.19041.0\win10-x64\mscordaccore_amd64_amd64_7.0.1123.42427.dll
 C:\Users\emand\Source\Repos\game-maryfrost_game\SnakeClient\bin\Debug\net7.0-windows10.0.19041.0\win10-x64\mscordbi.dll
 C:\Users\emand\Source\Repos\game-maryfrost_game\SnakeClient\bin\Debug\net7.0-windows10.0.19041.0\win10-x64\mscorrc.dll
 C:\Users\emand\Source\Repos\game-maryfrost_game\SnakeClient\bin\Debug\net7.0-windows10.0.19041.0\win10-x64\msquic.dll
@@ -305,3 +304,4 @@ C:\Users\emand\Source\Repos\game-maryfrost_game\SnakeClient\obj\Debug\net7.0-win
 C:\Users\emand\Source\Repos\game-maryfrost_game\SnakeClient\obj\Debug\net7.0-windows10.0.19041.0\win10-x64\resizetizer\r\skeleheadleft.scale-100.png
 C:\Users\emand\Source\Repos\game-maryfrost_game\SnakeClient\obj\Debug\net7.0-windows10.0.19041.0\win10-x64\resizetizer\r\skeleheadright.scale-100.png
 C:\Users\emand\Source\Repos\game-maryfrost_game\SnakeClient\obj\Debug\net7.0-windows10.0.19041.0\win10-x64\resizetizer\r\skeleheadup.scale-100.png
+C:\Users\emand\Source\Repos\game-maryfrost_game\SnakeClient\bin\Debug\net7.0-windows10.0.19041.0\win10-x64\mscordaccore_amd64_amd64_7.0.1323.51816.dll
