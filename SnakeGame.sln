@@ -16,6 +16,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "README", "README", "{BCFED0
 		README.txt = README.txt
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Server", "Server\Server.csproj", "{A679C7E0-7114-4ED7-AAFE-97B817611B77}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServerController", "ServerController\ServerController.csproj", "{14E08072-1846-44F7-AF1A-7CF2E539B4BC}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -40,6 +44,14 @@ Global
 		{BFCDF8FE-4ED6-4ED4-8D94-D2061749DFE5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BFCDF8FE-4ED6-4ED4-8D94-D2061749DFE5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BFCDF8FE-4ED6-4ED4-8D94-D2061749DFE5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A679C7E0-7114-4ED7-AAFE-97B817611B77}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A679C7E0-7114-4ED7-AAFE-97B817611B77}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A679C7E0-7114-4ED7-AAFE-97B817611B77}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A679C7E0-7114-4ED7-AAFE-97B817611B77}.Release|Any CPU.Build.0 = Release|Any CPU
+		{14E08072-1846-44F7-AF1A-7CF2E539B4BC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{14E08072-1846-44F7-AF1A-7CF2E539B4BC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{14E08072-1846-44F7-AF1A-7CF2E539B4BC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{14E08072-1846-44F7-AF1A-7CF2E539B4BC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

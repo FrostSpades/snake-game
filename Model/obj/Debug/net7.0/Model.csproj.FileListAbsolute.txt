@@ -24,3 +24,4 @@ C:\Users\emand\Source\Repos\game-maryfrost_game\Model\bin\Debug\net7.0\Vector2D.
 C:\Users\emand\Source\Repos\game-maryfrost_game\Model\bin\Debug\net7.0\Vector2D.pdb
 C:\Users\emand\Source\Repos\game-maryfrost_game\Model\obj\Debug\net7.0\Model.csproj.AssemblyReference.cache
 C:\Users\emand\Source\Repos\game-maryfrost_game\Model\obj\Debug\net7.0\Model.csproj.CopyComplete
+C:\Users\emand\Source\Repos\game-maryfrost_game\Model\obj\Debug\net7.0\Model.sourcelink.json

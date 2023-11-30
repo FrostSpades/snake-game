@@ -304,4 +304,5 @@ C:\Users\emand\Source\Repos\game-maryfrost_game\SnakeClient\obj\Debug\net7.0-win
 C:\Users\emand\Source\Repos\game-maryfrost_game\SnakeClient\obj\Debug\net7.0-windows10.0.19041.0\win10-x64\resizetizer\r\skeleheadleft.scale-100.png
 C:\Users\emand\Source\Repos\game-maryfrost_game\SnakeClient\obj\Debug\net7.0-windows10.0.19041.0\win10-x64\resizetizer\r\skeleheadright.scale-100.png
 C:\Users\emand\Source\Repos\game-maryfrost_game\SnakeClient\obj\Debug\net7.0-windows10.0.19041.0\win10-x64\resizetizer\r\skeleheadup.scale-100.png
-C:\Users\emand\Source\Repos\game-maryfrost_game\SnakeClient\bin\Debug\net7.0-windows10.0.19041.0\win10-x64\mscordaccore_amd64_amd64_7.0.1323.51816.dll
+C:\Users\emand\Source\Repos\game-maryfrost_game\SnakeClient\bin\Debug\net7.0-windows10.0.19041.0\win10-x64\mscordaccore_amd64_amd64_7.0.1423.51910.dll
+C:\Users\emand\Source\Repos\game-maryfrost_game\SnakeClient\obj\Debug\net7.0-windows10.0.19041.0\win10-x64\SnakeClient.sourcelink.json

@@ -9,6 +9,8 @@ build_property.EnforceExtendedAnalyzerRules =
 build_property._SupportedPlatformList = Linux,macOS,Windows
 build_property.RootNamespace = SnakeClient
 build_property.ProjectDir = C:\Users\emand\Source\Repos\game-maryfrost_game\SnakeClient\
+build_property.EnableComHosting = 
+build_property.EnableGeneratedComInterfaceComImportInterop = 
 
 [C:/Users/emand/Source/Repos/game-maryfrost_game/SnakeClient/App.xaml]
 build_metadata.AdditionalFiles.GenKind = Xaml
