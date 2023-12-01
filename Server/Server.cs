@@ -6,6 +6,7 @@ using ServerController;
 
 public class Server
 {
+
     ServerController serverController;
     World world;
     public static void Main(string[] args)
@@ -18,5 +19,6 @@ public class Server
     {
         serverController = new();
         world = serverController.GetWorld();
+        serverController.StartMainLoop();
     }
 }
