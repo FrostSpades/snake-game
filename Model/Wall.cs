@@ -1,7 +1,9 @@
 ﻿// Authors: Ethan Andrews and Mary Garfield
 // Class for the walls of the game.
 // University of Utah
+using System.Runtime.Serialization;
 using System.Text.Json.Serialization;
+using System.Xml.Serialization;
 using SnakeGame;
 
 namespace Model
@@ -9,16 +11,39 @@ namespace Model
     /// <summary>
     /// Class for the walls of the game.
     /// </summary>
+
+    [DataContract(Name ="Wall", Namespace ="")]
     public class Wall
     {
         [JsonInclude]
+        [DataMember(Name="ID")]
         public int wall;
 
         [JsonInclude]
-        public Vector2D p1, p2;
-        
-        // List of the segments of the wall
+        [DataMember(Name="p1")]
+        public Vector2D p1 { get; set; }
+
+        [JsonInclude]
+        [DataMember(Name="p2")]
+        public Vector2D p2 { get; set; }
+
+        [IgnoreDataMember]
+        // List of the segments of the wall for the client
         private List<Tuple<double, double>> segments;
+
+        /// <summary>
+        /// Default constructor for xml
+        /// </summary>
+        public Wall()
+        {
+            wall = 0;
+            p1 = new Vector2D();
+            p2 = new Vector2D();
+
+            // Fine as empty for the server because not used by server.
+            // Only used to simplify drawing for the client.
+            segments = new();
+        }
 
         [JsonConstructor]
         // Constructor for json objects

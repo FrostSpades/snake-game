@@ -87,6 +87,7 @@ public class ServerController
             // Get a unique world id
             int id = world.GetUniqueID();
 
+            // Send the id and the world size
             Networking.Send(state.TheSocket, id + "\n");
             Networking.Send(state.TheSocket, world.GetWorldSize() + "\n");
             
@@ -127,19 +128,23 @@ public class ServerController
                 switch (command.moving)
                 {
                     case "up":
-
+                        world.Move("up", state);
                         break;
 
                     case "down":
-
+                        world.Move("down", state);
                         break;
 
                     case "left":
-
+                        world.Move("left", state);
                         break;
 
                     case "right":
+                        world.Move("right", state);
+                        break;
 
+                    default:
+                        world.Move("none", state);
                         break;
                 }
             }
@@ -173,7 +178,15 @@ public class ServerController
 
     private void Update()
     {
-        //change world and send to clients
+        world.Update();
+
+        lock (world.GetSnakeLock())
+        {
+            foreach (SocketState client in clients.Values)
+            {
+
+            }
+        }
     }
 
 

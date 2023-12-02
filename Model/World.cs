@@ -2,9 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.WebSockets;
+using System.Runtime.Serialization;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
+using System.Xml;
+using System.Xml.Serialization;
 using NetworkUtil;
 
 namespace Model;
@@ -12,18 +15,27 @@ public class World
 {
     private GameSettings settings;
     private Dictionary<SocketState, Snake> snakes;
+    private Dictionary<int, Powerup> powerups;
     private int uniqueID;
-    private string universalLock;
     private HashSet<Tuple<int, int>> wallLocations;
-
+    private string snakeLock, snakeCreateLock;
     public World()
     {
         snakes = new Dictionary<SocketState, Snake>();
-        universalLock = "universalLock";
+        powerups = new();
+
+        snakeLock = "snakeLock";
+        snakeCreateLock = "snakeCreateLock";
 
         string filePath = "settings.xml";
-        string jsonContent = File.ReadAllText(filePath);
-        GameSettings? tempSettings = JsonSerializer.Deserialize<GameSettings>(jsonContent);
+        GameSettings? tempSettings;
+
+        DataContractSerializer ser = new(typeof(GameSettings));
+
+        XmlReader reader = XmlReader.Create("settings.xml");
+        tempSettings = (GameSettings?)ser.ReadObject(reader);
+
+        //GameSettings? tempSettings = JsonSerializer.Deserialize<GameSettings>(jsonContent);
 
         if (tempSettings == null )
         {
@@ -90,6 +102,12 @@ public class World
             }
         }
     }
+
+    public void Move(string dir, SocketState state)
+    {
+        snakes[state].SetDirection(dir);
+    }
+
     public int GetMSPerFrame()
     {
         return settings.MSPerFrame;
@@ -104,13 +122,38 @@ public class World
     {
         return snakes.Values;
     }
+
+    public IEnumerable<Powerup> GetPowerups()
+    {
+        return powerups.Values;
+    }
+
     public void AddSnake(string name, int id, SocketState state)
     {
+        Snake newSnake = new Snake(id, name, GetSnakes(), wallLocations, GetPowerups(), snakeCreateLock, settings.UniverseSize);
         
+        lock (snakeLock)
+        {
+            snakes.Add(state, newSnake);
+        }
     }
+
+    public void Update()
+    {
+        lock (snakeLock)
+        {
+
+        }
+    }
+
+    public string GetSnakeLock()
+    {
+        return snakeLock;
+    }
+
     public int GetWorldSize()
     {
-        return settings.WorldSize;
+        return settings.UniverseSize;
     }
 
     public int GetUniqueID()

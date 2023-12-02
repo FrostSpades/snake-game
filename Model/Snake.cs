@@ -39,6 +39,11 @@ namespace Model
         // and (item3, item4) are the coordinates of the end of the segment
         private List<Tuple<float, float, float, float>> segments;
 
+        // The speed of the snake
+        //private int speed = 6;
+
+        private bool headChanged;
+
         [JsonConstructor]
         // Constructor for json objects
         public Snake(int snake, string name, List<Vector2D> body, Vector2D dir, int score, bool died, bool alive, bool dc, bool join)
@@ -66,10 +71,13 @@ namespace Model
         {
             snake = id;
             this.name = name;
+            headChanged = false;
 
             // Generate Body
             // Generate Segments
             // Generate Direction
+            body = new();
+            segments = new();
             Random random = new Random();
 
             int newDirection = (int)Math.Floor(random.NextDouble() * 4);
@@ -88,7 +96,7 @@ namespace Model
                     this.dir = new Vector2D(-1, 0);
                     break;
 
-                case 3: // Right
+                default: // Right
                     this.dir = new Vector2D(1, 0);
                     break;
             }
@@ -194,6 +202,12 @@ namespace Model
                                 if (found)
                                 {
                                     body.Add(new Vector2D(i, j));
+
+                                    // Add all of the segments to the segments list
+                                    for (int h = 0; h < body.Count - 1; h++)
+                                    {
+                                        segments.Add(new Tuple<float, float, float, float>((float)body[h].GetX(), (float)body[h].GetY(), (float)body[h + 1].GetX(), (float)body[h + 1].GetY()));
+                                    }
                                     return;
                                 }
                             }
@@ -222,6 +236,12 @@ namespace Model
                                 if (found)
                                 {
                                     body.Add(new Vector2D(i, j));
+
+                                    // Add all of the segments to the segments list
+                                    for (int h = 0; h < body.Count - 1; h++)
+                                    {
+                                        segments.Add(new Tuple<float, float, float, float>((float)body[h].GetX(), (float)body[h].GetY(), (float)body[h + 1].GetX(), (float)body[h + 1].GetY()));
+                                    }
                                     return;
                                 }
                             }
@@ -250,6 +270,12 @@ namespace Model
                                 if (found)
                                 {
                                     body.Add(new Vector2D(i, j));
+
+                                    // Add all of the segments to the segments list
+                                    for (int h = 0; h < body.Count - 1; h++)
+                                    {
+                                        segments.Add(new Tuple<float, float, float, float>((float)body[h].GetX(), (float)body[h].GetY(), (float)body[h + 1].GetX(), (float)body[h + 1].GetY()));
+                                    }
                                     return;
                                 }
                             }
@@ -278,6 +304,12 @@ namespace Model
                                 if (found)
                                 {
                                     body.Add(new Vector2D(i, j));
+
+                                    // Add all of the segments to the segments list
+                                    for (int h = 0; h < body.Count - 1; h++)
+                                    {
+                                        segments.Add(new Tuple<float, float, float, float>((float)body[h].GetX(), (float)body[h].GetY(), (float)body[h + 1].GetX(), (float)body[h + 1].GetY()));
+                                    }
                                     return;
                                 }
                             }
@@ -348,6 +380,70 @@ namespace Model
             {
                 return "down";
             }
+        }
+
+        public void SetDirection(string dir)
+        {
+            if (dir == "none")
+            {
+                return;
+            }
+
+            string currentDirection = GetDir();
+
+            switch (dir)
+            {
+                case "left":
+                    if (currentDirection != "right")
+                    {
+                        this.dir = new Vector2D(-1, 0);
+                        headChanged = dir == currentDirection;
+                    }
+                    break;
+                case "right":
+                    if (currentDirection != "left")
+                    {
+                        this.dir = new Vector2D(1, 0);
+                        headChanged = dir == currentDirection;
+                    }
+                    break;
+                case "up":
+                    if (currentDirection != "down")
+                    {
+                        this.dir = new Vector2D(0, -1);
+                        headChanged = dir == currentDirection;
+                    }
+                    break;
+                case "down":
+                    if (currentDirection != "up")
+                    {
+                        this.dir = new Vector2D(0, 1);
+                        headChanged = dir == currentDirection;
+                    }
+                    break;
+            }
+        }
+
+        public void Move()
+        {
+            Vector2D tail = body[0];
+            Vector2D afterTail = body[1];
+            
+            // If the head changed directions, add a new head
+            if (headChanged)
+            {
+                Vector2D newHead = body[body.Count - 1] + (dir * 6);
+                body.Add(newHead);
+
+                // Set head changed back to false
+                headChanged = false;
+            }
+            // If the head did not change directions, change the head
+            else
+            {
+                body[body.Count - 1] += (dir * 6);
+            }
+
         }
     }
 }
