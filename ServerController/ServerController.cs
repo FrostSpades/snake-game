@@ -3,6 +3,7 @@ using NetworkUtil;
 using System.Data;
 using System.Diagnostics;
 using System.Security.Cryptography;
+using System.Text.Json;
 using System.Text.RegularExpressions;
 
 namespace ServerController;
@@ -54,11 +55,10 @@ public class ServerController
             RemoveClient(state.ID);
             return;
         }
+
         ProcessName(state);
-        state.OnNetworkAction = ReceiveMessage;
+
         Networking.GetData(state);
-            
-       
     }
     private void ReceiveMessage(SocketState state)
     {
@@ -70,6 +70,7 @@ public class ServerController
         ProcessCommand(state);
         Networking.GetData(state);
     }
+
     private void ProcessName(SocketState state) 
     {
         string totalData = state.GetData();
@@ -82,12 +83,29 @@ public class ServerController
 
             if (part[part.Length - 1] != '\n')
                 break;
-            int id = world.AddSnake();
+
+            // Get a unique world id
+            int id = world.GetUniqueID();
+
             Networking.Send(state.TheSocket, id + "\n");
             Networking.Send(state.TheSocket, world.GetWorldSize() + "\n");
-            state.RemoveData(0, part.Length);
-
             
+            // Sends all the walls
+            foreach (Wall w in world.GetWalls())
+            {
+                string jsonWall = JsonSerializer.Serialize<Wall>(w);
+
+                Networking.Send(state.TheSocket, jsonWall + "\n");
+            }
+
+            // Finally adds the snake to the snake list so that it can
+            // receive all the other messages. Necessary for making sure
+            // it doesn't receive snakes before it receives walls
+            world.AddSnake(part, id, state);
+
+            // Change the OnNetworkAction to process commands
+            state.OnNetworkAction = ReceiveMessage;
+            state.RemoveData(0, part.Length);
         }
     }
     private void ProcessCommand(SocketState state)
@@ -103,8 +121,30 @@ public class ServerController
             if (part[part.Length - 1] != '\n')
                 break;
 
+            ControlCommand? command = JsonSerializer.Deserialize<ControlCommand>(part);
+            if (command != null)
+            {
+                switch (command.moving)
+                {
+                    case "up":
+
+                        break;
+
+                    case "down":
+
+                        break;
+
+                    case "left":
+
+                        break;
+
+                    case "right":
+
+                        break;
+                }
+            }
+
             state.RemoveData(0, part.Length);
-            if()
         }
     }
     public void StartMainLoop()

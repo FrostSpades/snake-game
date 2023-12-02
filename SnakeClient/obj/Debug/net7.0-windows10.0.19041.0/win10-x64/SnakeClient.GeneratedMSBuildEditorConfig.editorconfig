@@ -8,27 +8,29 @@ build_property.PlatformNeutralAssembly =
 build_property.EnforceExtendedAnalyzerRules = 
 build_property._SupportedPlatformList = Linux,macOS,Windows
 build_property.RootNamespace = SnakeClient
-build_property.ProjectDir = C:\Users\mhgar\Source\Repos\game-maryfrost_game\SnakeClient\
+build_property.ProjectDir = C:\Users\emand\Source\Repos\game-maryfrost_game\SnakeClient\
+build_property.EnableComHosting = 
+build_property.EnableGeneratedComInterfaceComImportInterop = 
 
-[C:/Users/mhgar/Source/Repos/game-maryfrost_game/SnakeClient/App.xaml]
+[C:/Users/emand/Source/Repos/game-maryfrost_game/SnakeClient/App.xaml]
 build_metadata.AdditionalFiles.GenKind = Xaml
 build_metadata.AdditionalFiles.ManifestResourceName = SnakeClient.App.xaml
 build_metadata.AdditionalFiles.TargetPath = App.xaml
 build_metadata.AdditionalFiles.RelativePath = App.xaml
 
-[C:/Users/mhgar/Source/Repos/game-maryfrost_game/SnakeClient/MainPage.xaml]
+[C:/Users/emand/Source/Repos/game-maryfrost_game/SnakeClient/MainPage.xaml]
 build_metadata.AdditionalFiles.GenKind = Xaml
 build_metadata.AdditionalFiles.ManifestResourceName = SnakeClient.MainPage.xaml
 build_metadata.AdditionalFiles.TargetPath = MainPage.xaml
 build_metadata.AdditionalFiles.RelativePath = MainPage.xaml
 
-[C:/Users/mhgar/Source/Repos/game-maryfrost_game/SnakeClient/Resources/Styles/Colors.xaml]
+[C:/Users/emand/Source/Repos/game-maryfrost_game/SnakeClient/Resources/Styles/Colors.xaml]
 build_metadata.AdditionalFiles.GenKind = Xaml
 build_metadata.AdditionalFiles.ManifestResourceName = SnakeClient.Resources.Styles.Colors.xaml
 build_metadata.AdditionalFiles.TargetPath = Resources\Styles\Colors.xaml
 build_metadata.AdditionalFiles.RelativePath = Resources\Styles\Colors.xaml
 
-[C:/Users/mhgar/Source/Repos/game-maryfrost_game/SnakeClient/Resources/Styles/Styles.xaml]
+[C:/Users/emand/Source/Repos/game-maryfrost_game/SnakeClient/Resources/Styles/Styles.xaml]
 build_metadata.AdditionalFiles.GenKind = Xaml
 build_metadata.AdditionalFiles.ManifestResourceName = SnakeClient.Resources.Styles.Styles.xaml
 build_metadata.AdditionalFiles.TargetPath = Resources\Styles\Styles.xaml

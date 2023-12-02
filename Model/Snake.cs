@@ -60,7 +60,235 @@ namespace Model
             {
                 segments.Add(new Tuple<float, float, float, float>((float)body[i].GetX(), (float)body[i].GetY(), (float)body[i + 1].GetX(), (float)body[i + 1].GetY()));
             }
-        } 
+        }
+
+        public Snake(int id, string name, IEnumerable<Snake> snakes, HashSet<Tuple<int, int>> wallLocations, IEnumerable<Powerup> powerups, string uLock, int worldSize)
+        {
+            snake = id;
+            this.name = name;
+
+            // Generate Body
+            // Generate Segments
+            // Generate Direction
+            Random random = new Random();
+
+            int newDirection = (int)Math.Floor(random.NextDouble() * 4);
+
+            switch (newDirection)
+            {
+                case 0: // Up
+                    this.dir = new Vector2D(0, -1);
+                    break;
+
+                case 1: // Down
+                    this.dir = new Vector2D(0, 1);
+                    break;
+
+                case 2: // Left
+                    this.dir = new Vector2D(-1, 0);
+                    break;
+
+                case 3: // Right
+                    this.dir = new Vector2D(1, 0);
+                    break;
+            }
+
+            GenerateBody(snakes, wallLocations, powerups, uLock, worldSize);
+
+            score = 0;
+            died = false;
+            alive = true;
+            dc = false;
+            join = true;
+        }
+
+        private void GenerateBody(IEnumerable<Snake> snakes, HashSet<Tuple<int, int>> wallLocations, IEnumerable<Powerup> powerups, string uLock, int worldSize)
+        {
+            // Lock so that two snakes can't respawn at the same time
+            lock (uLock)
+            {
+                int sideLength = (worldSize - 10) / 120;
+                int numOfSquares = sideLength * sideLength;
+
+                // Generate a random 120 by 120 square
+                Random random = new Random();
+                int randomSquare = (int)Math.Floor(random.NextDouble() * numOfSquares);
+
+                HashSet<Tuple<int, int>> respawnable = new HashSet<Tuple<int, int>>();
+
+                // Add snake points to the respawnable set
+                foreach (Snake s in snakes)
+                {
+                    foreach (Tuple<float, float, float, float> segment in s.GetSegments())
+                    {
+                        if (segment.Item1 == segment.Item2)
+                        {
+                            if (segment.Item3 > segment.Item4)
+                            {
+                                for (int k = (int)segment.Item4; k <= (int)segment.Item3; k++)
+                                {
+                                    respawnable.Add(new Tuple<int, int>((int)segment.Item1, k));
+                                }
+                            }
+
+                            else
+                            {
+                                for (int k = (int)segment.Item3; k <= (int)segment.Item4; k++)
+                                {
+                                    respawnable.Add(new Tuple<int, int>((int)segment.Item1, k));
+                                }
+                            }
+                        }
+
+                        else
+                        {
+                            if (segment.Item1 > segment.Item2)
+                            {
+                                for (int k = (int)segment.Item2; k <= (int)segment.Item1; k++)
+                                {
+                                    respawnable.Add(new Tuple<int, int>(k, (int)segment.Item3));
+                                }
+                            }
+
+                            else
+                            {
+                                for (int k = (int)segment.Item1; k <= (int)segment.Item2; k++)
+                                {
+                                    respawnable.Add(new Tuple<int, int>(k, (int)segment.Item3));
+                                }
+                            }
+                        }
+                    }
+                }
+
+                foreach (Powerup p in powerups)
+                {
+                    respawnable.Add(new Tuple<int, int>((int)p.GetLocation().X, (int)p.GetLocation().Y));
+                }
+
+                // Try to create snake. If fails, increment to the next square and retry
+                while (true)
+                {
+                    int rowOffset = 120 * (randomSquare / sideLength);
+                    int colOffset = 120 * (randomSquare % sideLength);
+
+                    // If snake direction is up
+                    if (dir.Equals(new Vector2D(0, -1)))
+                    {
+                        for (int i = 0; i < 120; i++)
+                        {
+                            for (int j = 0; j < 120; j++)
+                            {
+                                bool found = true;
+
+                                for (int k = 0; k < 125; k++)
+                                {
+                                    // If there are things in the way, keep searching
+                                    if (respawnable.Contains(new Tuple<int, int>(colOffset + i, rowOffset + j - 5 + k)) || wallLocations.Contains(new Tuple<int, int>(colOffset + i, rowOffset + j - 5 + k)))
+                                    {
+                                        found = false;
+                                        continue;
+                                    }
+                                }
+
+                                if (found)
+                                {
+                                    body.Add(new Vector2D(i, j));
+                                    return;
+                                }
+                            }
+                        }
+                    }
+
+                    // If snake direction is down
+                    else if (dir.Equals(new Vector2D(0, 1)))
+                    {
+                        for (int i = 0; i < 120; i++)
+                        {
+                            for (int j = 0; j < 120; j++)
+                            {
+                                bool found = true;
+
+                                for (int k = 0; k < 125; k++)
+                                {
+                                    // If there are things in the way, keep searching
+                                    if (respawnable.Contains(new Tuple<int, int>(colOffset + i, rowOffset + j + 5 - k)) || wallLocations.Contains(new Tuple<int, int>(colOffset + i, rowOffset + j + 5 - k)))
+                                    {
+                                        found = false;
+                                        continue;
+                                    }
+                                }
+
+                                if (found)
+                                {
+                                    body.Add(new Vector2D(i, j));
+                                    return;
+                                }
+                            }
+                        }
+                    }
+
+                    // If snake direction is left
+                    else if (dir.Equals(new Vector2D(-1, 0)))
+                    {
+                        for (int i = 0; i < 120; i++)
+                        {
+                            for (int j = 0; j < 120; j++)
+                            {
+                                bool found = true;
+
+                                for (int k = 0; k < 125; k++)
+                                {
+                                    // If there are things in the way, keep searching
+                                    if (respawnable.Contains(new Tuple<int, int>(colOffset + i + 5 - k, rowOffset + j)) || wallLocations.Contains(new Tuple<int, int>(colOffset + i + 5 - k, rowOffset + j)))
+                                    {
+                                        found = false;
+                                        continue;
+                                    }
+                                }
+
+                                if (found)
+                                {
+                                    body.Add(new Vector2D(i, j));
+                                    return;
+                                }
+                            }
+                        }
+                    }
+
+                    // If snake direction is right
+                    else
+                    {
+                        for (int i = 0; i < 120; i++)
+                        {
+                            for (int j = 0; j < 120; j++)
+                            {
+                                bool found = true;
+
+                                for (int k = 0; k < 125; k++)
+                                {
+                                    // If there are things in the way, keep searching
+                                    if (respawnable.Contains(new Tuple<int, int>(colOffset + i - 5 + k, rowOffset + j)) || wallLocations.Contains(new Tuple<int, int>(colOffset + i - 5 + k, rowOffset + j)))
+                                    {
+                                        found = false;
+                                        continue;
+                                    }
+                                }
+
+                                if (found)
+                                {
+                                    body.Add(new Vector2D(i, j));
+                                    return;
+                                }
+                            }
+                        }
+                    }
+
+                    randomSquare = (randomSquare + 1) % numOfSquares;
+                }
+            
+            }
+        }
 
         /// <summary>
         /// Returns the segments list
