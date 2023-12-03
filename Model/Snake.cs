@@ -35,6 +35,8 @@ namespace Model
         [JsonInclude]
         public bool join;
 
+        private World? world;
+
         // The segments list where (item1, item2) are the coordinates of the beginning of the segment
         // and (item3, item4) are the coordinates of the end of the segment
         private List<Tuple<float, float, float, float>> segments;
@@ -55,6 +57,7 @@ namespace Model
             this.alive = alive;
             this.dc = dc;
             this.join = join;
+            world = null;
 
             segments = new();
 
@@ -65,10 +68,11 @@ namespace Model
             }
         }
 
-        public Snake(int id, string name, IEnumerable<Snake> snakes, IEnumerable<Wall> walls, IEnumerable<Powerup> powerups, string uLock, int worldSize)
+        public Snake(int id, string name, IEnumerable<Snake> snakes, IEnumerable<Wall> walls, IEnumerable<Powerup> powerups, string uLock, int worldSize, World world)
         {
             snake = id;
             this.name = name;
+            this.world = world;
 
             // Default values to be changed later by GenerateBody method
             body = new();
@@ -128,7 +132,7 @@ namespace Model
                 int numOfSquares = sideLength * sideLength;
 
                 // Generate a random 120 by 120 square
-                Random random = new Random();
+                random = new Random();
                 int randomSquare = (int)Math.Floor(random.NextDouble() * numOfSquares);
 
 
@@ -143,30 +147,10 @@ namespace Model
                         for (int j = 0; j < 120; j++)
                         {
 
-                            Tuple<Vector2D, Vector2D, Vector2D, Vector2D> collisionVectors = new(new Vector2D(), new Vector2D(), new Vector2D(), new Vector2D());
-
-                            // Adds the four corners of the snake to collisionVectors
-                            switch (GetDir())
-                            {
-                                case "up":
-                                    collisionVectors = new(new Vector2D(rowOffset + i - 5, colOffset + j - 5), new Vector2D(rowOffset + i + 5, colOffset + j - 5), new Vector2D(rowOffset + i + 5, colOffset + j + 125), new Vector2D(rowOffset + i - 5, colOffset + j + 125));
-                                    break;
-
-                                case "down":
-                                    collisionVectors = new(new Vector2D(rowOffset + i - 5, colOffset + j - 125), new Vector2D(rowOffset + i + 5, colOffset + j - 125), new Vector2D(rowOffset + i + 5, colOffset + j + 5), new Vector2D(rowOffset + i - 5, colOffset + j + 5));
-                                    break;
-
-                                case "left":
-                                    collisionVectors = new(new Vector2D(rowOffset + i - 5, colOffset + j - 5), new Vector2D(rowOffset + i + 125, colOffset + j - 5), new Vector2D(rowOffset + i + 125, colOffset + j + 5), new Vector2D(rowOffset + i - 5, colOffset + j + 5));
-                                    break;
-
-                                case "right":
-                                    collisionVectors = new(new Vector2D(rowOffset + i - 125, colOffset + j - 5), new Vector2D(rowOffset + i + 5, colOffset + j - 5), new Vector2D(rowOffset + i + 5, colOffset + j + 5), new Vector2D(rowOffset + i - 125, colOffset + j + 5));
-                                    break;
-                            }
+                            Vector2D head = new Vector2D(i + rowOffset, j +colOffset);
 
                             // If there are collisions, continue loop
-                            if (CheckForCollisions(snakes, walls, powerups, collisionVectors))
+                            if (CheckForCollisions(snakes, walls, powerups, head))
                             {
                                 continue;
                             }
@@ -199,12 +183,12 @@ namespace Model
         /// <param name="powerups"></param>
         /// <param name="collisionVectors"></param>
         /// <returns></returns>
-        private bool CheckForCollisions(IEnumerable<Snake> snakes, IEnumerable<Wall> walls, IEnumerable<Powerup> powerups, Tuple<Vector2D, Vector2D, Vector2D, Vector2D> collisionVectors)
+        private bool CheckForCollisions(IEnumerable<Snake> snakes, IEnumerable<Wall> walls, IEnumerable<Powerup> powerups, Vector2D head)
         {
             // Check for wall collisions
             foreach (Wall w in walls)
             {
-                if (w.Collision(collisionVectors))
+                if (w.Collision(head, dir))
                 {
                     return true;
                 }
@@ -213,7 +197,7 @@ namespace Model
             // Check for snake collisions
             foreach (Snake s in snakes)
             {
-                if (s.Collision(collisionVectors))
+                if (s.Collision(head, dir))
                 {
                     return true;
                 }
@@ -222,7 +206,7 @@ namespace Model
             // Check for powerup collisions
             foreach (Powerup p in powerups)
             {
-                if (p.Collision(collisionVectors))
+                if (p.Collision(head, dir))
                 {
                     return true;
                 }
@@ -231,9 +215,9 @@ namespace Model
             return false;
         }
 
-        public bool Collision(Tuple<Vector2D, Vector2D, Vector2D, Vector2D> segments)
+        public bool Collision(Vector2D head, Vector2D dir)
         {
-            // NEEDS TO BE IMPLEMENTED
+            
 
             return false;
         }
@@ -311,25 +295,25 @@ namespace Model
             switch (dir)
             {
                 case "left":
-                    if (currentDirection != new Vector2D(1, 0))
+                    if (!currentDirection.Equals(new Vector2D(1, 0)))
                     {
                         this.dir = new Vector2D(-1, 0);
                     }
                     break;
                 case "right":
-                    if (currentDirection != new Vector2D(-1, 0))
+                    if (!currentDirection.Equals(new Vector2D(-1, 0)))
                     {
                         this.dir = new Vector2D(1, 0);
                     }
                     break;
                 case "up":
-                    if (currentDirection != new Vector2D(0, -1))
+                    if (!currentDirection.Equals(new Vector2D(0, 1)))
                     {
                         this.dir = new Vector2D(0, -1);
                     }
                     break;
                 case "down":
-                    if (currentDirection != new Vector2D(0, 1))
+                    if (!currentDirection.Equals(new Vector2D(0, -1)))
                     {
                         this.dir = new Vector2D(0, 1);
                     }
@@ -337,6 +321,9 @@ namespace Model
             }
         }
 
+        /// <summary>
+        /// Updates the Snake's body position
+        /// </summary>
         public void Update()
         {
             Vector2D currentDirection = body[body.Count - 1] - body[body.Count - 2];
@@ -372,6 +359,13 @@ namespace Model
             {
                 body.RemoveAt(0);
                 body.Insert(0, newTail);
+            }
+
+            // Check for collisions
+            if (CheckForCollisions(world!.GetSnakes(), world.GetWalls(), world.GetPowerups(), body[body.Count - 1]))
+            {
+                died = true;
+                alive = false;
             }
         }
     }

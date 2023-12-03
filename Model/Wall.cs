@@ -111,10 +111,56 @@ namespace Model
             return segments;
         }
 
-        public bool Collision(Tuple<Vector2D, Vector2D, Vector2D, Vector2D> segments)
+        public bool Collision(Vector2D head, Vector2D dir)
         {
-            // Need to implement
+            Vector2D topOfHead = head + (dir * 10);
 
+            if (p1.X == p2.X)
+            {
+                if (p1.Y > p2.Y)
+                {
+                    if (p2.Y - 25 < topOfHead.Y && topOfHead.Y < p1.Y + 25)
+                    {
+                        if (p1.X - 25 < topOfHead.X && topOfHead.X < p1.X + 25)
+                        {
+                            return true;
+                        }
+                    }
+                }
+                else
+                {
+                    if (p1.Y - 25 < topOfHead.Y && topOfHead.Y < p2.Y + 25)
+                    {
+                        if (p1.X - 25 < topOfHead.X && topOfHead.X < p1.X + 25)
+                        {
+                            return true;
+                        }
+                    }
+                }
+            }
+            else
+            {
+                if (p1.X > p2.X)
+                {
+                    if (p2.X - 25 < topOfHead.X && topOfHead.X < p1.X + 25)
+                    {
+                        if (p1.Y - 25 < topOfHead.Y && topOfHead.Y < p1.Y + 25)
+                        {
+                            return true;
+                        }
+                    }
+                }
+                else
+                {
+                    if (p1.X - 25 < topOfHead.X && topOfHead.X < p2.X + 25)
+                    {
+                        if (p1.Y - 25 < topOfHead.Y && topOfHead.Y < p1.Y + 25)
+                        {
+                            return true;
+                        }
+                    }
+                }
+            }
 
             return false;
         }

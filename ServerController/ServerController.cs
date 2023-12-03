@@ -153,7 +153,7 @@ public class ServerController
 
             if (p[p.Length - 1] != '\n')
                 break;
-            // "{\"moving\":\"left\"}"
+
             string part = p.Substring(0, p.Length - 1);
 
             if (!validCommands.Contains(part))

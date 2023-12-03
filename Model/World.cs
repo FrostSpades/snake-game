@@ -70,7 +70,7 @@ public class World
 
     public void AddSnake(string name, int id, SocketState state)
     {
-        Snake newSnake = new Snake(id, name, GetSnakes(), GetWalls(), GetPowerups(), snakeCreateLock, settings.UniverseSize);
+        Snake newSnake = new Snake(id, name, GetSnakes(), GetWalls(), GetPowerups(), snakeCreateLock, settings.UniverseSize, this);
         
         lock (snakeLock)
         {
