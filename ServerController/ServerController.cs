@@ -7,6 +7,7 @@ using System.Net;
 using System.Security.Cryptography;
 using System.Text.Json;
 using System.Text.RegularExpressions;
+using System.Diagnostics.Tracing;
 
 namespace ServerController;
 public class ServerController
@@ -51,7 +52,7 @@ public class ServerController
             return;
         }
 
-        lock(clients)
+        lock(world.GetSnakeLock())
         {
             clients[state.ID] = state;
         }
@@ -207,7 +208,7 @@ public class ServerController
     private void RemoveClient(long id) 
     {
         Console.WriteLine("Client " + id + " disconnected");
-        lock(clients)
+        lock(world.GetSnakeLock())
         {
             clients.Remove(id);
         }
@@ -226,7 +227,10 @@ public class ServerController
                 // Sends the json snake objects to all of the clients
                 foreach (SocketState client in clients.Values)
                 {
-                    Networking.Send(client.TheSocket, snakeString + "\n");
+                    if (world.SnakeExists(client))
+                    {
+                        Networking.Send(client.TheSocket, snakeString + "\n");
+                    }
                 }
             }
         }

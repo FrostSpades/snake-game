@@ -60,7 +60,10 @@ public class World
 
     public IEnumerable<Snake> GetSnakes()
     {
-        return snakes.Values;
+        lock (snakeLock)
+        {
+            return snakes.Values;
+        }
     }
 
     public IEnumerable<Powerup> GetPowerups()
@@ -105,5 +108,9 @@ public class World
         uniqueID++;
 
         return id;
+    }
+    public bool SnakeExists(SocketState name)
+    {
+        return snakes.ContainsKey(name);
     }
 }

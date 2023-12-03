@@ -150,7 +150,7 @@ namespace Model
                             Vector2D head = new Vector2D(i + rowOffset, j +colOffset);
 
                             // If there are collisions, continue loop
-                            if (CheckForCollisions(snakes, walls, powerups, head))
+                            if (CheckForCollisionsBody(snakes, walls, powerups, head))
                             {
                                 continue;
                             }
@@ -189,6 +189,37 @@ namespace Model
             foreach (Wall w in walls)
             {
                 if (w.Collision(head, dir))
+                {
+                    return true;
+                }
+            }
+
+            // Check for snake collisions
+            foreach (Snake s in snakes)
+            {
+                if (s.Collision(head, dir))
+                {
+                    return true;
+                }
+            }
+
+            // Check for powerup collisions
+            foreach (Powerup p in powerups)
+            {
+                if (p.Collision(head, dir))
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+        private bool CheckForCollisionsBody(IEnumerable<Snake> snakes, IEnumerable<Wall> walls, IEnumerable<Powerup> powerups, Vector2D head)
+        {
+            // Check for wall collisions
+            foreach (Wall w in walls)
+            {
+                if (w.CollisionRectangle(head, (dir*-120)+head))
                 {
                     return true;
                 }

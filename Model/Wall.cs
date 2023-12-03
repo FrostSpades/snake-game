@@ -164,7 +164,127 @@ namespace Model
 
             return false;
         }
+        public bool CollisionRectangle(Vector2D head, Vector2D tail)
+        {
+            List<Vector2D> snakePoints = CalculatePoint(head, tail, 5);
+            List<Vector2D> rectanglePoints = CalculatePoint(p1, p2, 25);
+            foreach(Vector2D point in snakePoints)
+            {
+                if (rectanglePoints[0].X < point.X && point.X < rectanglePoints[1].X)
+                {
+                    if (rectanglePoints[0].Y < point.Y&& point.Y < rectanglePoints[2].Y)
+                    {
+                        return true; 
+                    }
+                }
+            }
+            foreach (Vector2D point in rectanglePoints)
+            {
+                if (snakePoints[0].X < point.X && point.X < snakePoints[1].X)
+                {
+                    if (snakePoints[0].Y < point.Y && point.Y < snakePoints[2].Y)
+                    {
+                        return true;
+                    }
+                }
+            }
+            if (snakePoints[0].X > rectanglePoints[0].X && snakePoints[0].X < rectanglePoints[0].X &&snakePoints[0].Y < rectanglePoints[0].Y)
+            {
+                if (snakePoints[3].Y > rectanglePoints[0].Y)
+                {
+                    return true; 
+                }
+            }
+            if (rectanglePoints[0].X > snakePoints[0].X && rectanglePoints[0].X < snakePoints[0].X && rectanglePoints[0].Y < snakePoints[0].Y)
+            {
+                if (rectanglePoints[3].Y > snakePoints[0].Y)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+        private List<Vector2D> CalculatePoint(Vector2D head, Vector2D tail, int size)
+        {
+            if (head.X == tail.X)
+            {
+                if (head.Y > tail.Y)
+                {
+                    Vector2D point1 = new Vector2D(tail);
+                    point1.X -= size;
+                    point1.Y -= size;
+                    Vector2D point2 = new Vector2D(tail);
+                    point2.X += size;
+                    point2.Y -= size;
+                    Vector2D point3 = new Vector2D(head);
+                    point3.X += size;
+                    point3.Y += size;
+                    Vector2D point4 = new Vector2D(head);
+                    point4.X -= size;
+                    point4.Y += size;
+                    List<Vector2D> points = new(){point1, point2, point3, point4};
+                    return points;
+
+
+                }
+                else
+                {
+                    Vector2D point1 = new Vector2D(head);
+                    point1.X -= size;
+                    point1.Y -= size;
+                    Vector2D point2 = new Vector2D(head);
+                    point2.X += size;
+                    point2.Y -= size;
+                    Vector2D point3 = new Vector2D(tail);
+                    point3.X += size;
+                    point3.Y += size;
+                    Vector2D point4 = new Vector2D(tail);
+                    point4.X -= size;
+                    point4.Y += size;
+                    List<Vector2D> points = new() { point1, point2, point3, point4 };
+                    return points;
+                }
+            }
+            else
+            {
+                if (head.X > tail.X)
+                {
+                    Vector2D point1 = new Vector2D(tail);
+                    point1.X -= size;
+                    point1.Y -= size;
+                    Vector2D point2 = new Vector2D(head);
+                    point2.X += size;
+                    point2.Y -= size;
+                    Vector2D point3 = new Vector2D(head);
+                    point3.X += size;
+                    point3.Y += size;
+                    Vector2D point4 = new Vector2D(tail);
+                    point4.X -= size;
+                    point4.Y += size;
+                    List<Vector2D> points = new() { point1, point2, point3, point4 };
+                    return points;
+                }
+                else
+                {
+                    Vector2D point1 = new Vector2D(head);
+                    point1.X -= size;
+                    point1.Y -= size;
+                    Vector2D point2 = new Vector2D(tail);
+                    point2.X += size;
+                    point2.Y -= size;
+                    Vector2D point3 = new Vector2D(tail);
+                    point3.X += size;
+                    point3.Y += size;
+                    Vector2D point4 = new Vector2D(head);
+                    point4.X -= size;
+                    point4.Y += size;
+                    List<Vector2D> points = new() { point1, point2, point3, point4 };
+                    return points;
+                }
+            }
+        }
     }
+}
 
     
-}
+
