@@ -40,8 +40,8 @@ namespace Model
             p1 = new Vector2D();
             p2 = new Vector2D();
 
-            // Fine as empty for the server because not used by server.
-            // Only used to simplify drawing for the client.
+            // It is fine for this to be empty for the server because segments is not used by server.
+            // It is only used by the client to simplify drawing.
             segments = new();
         }
 
@@ -102,13 +102,23 @@ namespace Model
 
         }
 
-    /// <summary>
-    /// Return the segments of the wall
-    /// </summary>
-    /// <returns></returns>
-    public List<Tuple<double, double>> GetSegments()
+        /// <summary>
+        /// Return the segments of the wall
+        /// </summary>
+        /// <returns></returns>
+        public List<Tuple<double, double>> GetSegments()
         {
             return segments;
         }
+
+        public bool Collision(Tuple<Vector2D, Vector2D, Vector2D, Vector2D> segments)
+        {
+            // Need to implement
+
+
+            return false;
+        }
     }
+
+    
 }

@@ -41,5 +41,12 @@ namespace Model
         {
             return loc;
         }
+
+        public bool Collision(Tuple<Vector2D, Vector2D, Vector2D, Vector2D> segment)
+        {
+            // Need to implement
+
+            return false;
+        }
     }
 }

@@ -21,23 +21,11 @@ public class GameSettings
     [DataMember]
     public List<Wall> Walls;
 
-    [IgnoreDataMember]
-    public Dictionary<int, Wall> walls;
-
     public GameSettings()
     {
         MSPerFrame = 0;
         RespawnRate = 0;
         UniverseSize = 0;
         Walls = new();
-        walls = new();
     }
-
-    //public GameSettings(int MSPerFrame, int RespawnRate, int WorldSize, List<Wall> Walls)
-    //{
-    //    this.MSPerFrame = MSPerFrame;
-    //    this.RespawnRate = RespawnRate;
-    //    this.WorldSize = WorldSize;
-    //    this.Walls = Walls;
-    //}
 }

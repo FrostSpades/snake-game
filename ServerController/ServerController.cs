@@ -2,6 +2,8 @@
 using NetworkUtil;
 using System.Data;
 using System.Diagnostics;
+using System.Net.Sockets;
+using System.Net;
 using System.Security.Cryptography;
 using System.Text.Json;
 using System.Text.RegularExpressions;
@@ -9,13 +11,23 @@ using System.Text.RegularExpressions;
 namespace ServerController;
 public class ServerController
 {
-    World world;
-    Dictionary<long, SocketState> clients;
+    private World world;
+    private Dictionary<long, SocketState> clients;
+    private HashSet<string> validCommands;
 
     public ServerController()
     {
         world = new World();
         clients = new();
+
+        validCommands = new HashSet<string>
+            {
+                "{\"moving\":\"left\"}",
+                "{\"moving\":\"right\"}",
+                "{\"moving\":\"up\"}",
+                "{\"moving\":\"down\"}",
+                "{\"moving\":\"none\"}"
+            };
 
         StartServer();
     }
@@ -43,6 +55,21 @@ public class ServerController
         {
             clients[state.ID] = state;
         }
+
+        // Print out the IP address and port
+        try
+        {
+            // Get the remote IP address
+            IPAddress ipAddress = ((IPEndPoint)state.TheSocket.RemoteEndPoint!).Address;
+            int port = ((IPEndPoint)state.TheSocket.RemoteEndPoint!).Port;
+            Console.WriteLine("Accepted new connection from " + ipAddress + ":" + port);
+        }
+        catch
+        {
+            RemoveClient(state.ID);
+            return;
+        }
+        
 
         state.OnNetworkAction = ReceiveFirstMessage;
 
@@ -76,13 +103,15 @@ public class ServerController
         string totalData = state.GetData();
         string[] parts = Regex.Split(totalData, @"(?<=[\n])");
 
-        foreach (string part in parts)
+        foreach (string p in parts)
         {
-            if (part.Length == 0)
+            if (p.Length == 0)
                 continue;
 
-            if (part[part.Length - 1] != '\n')
+            if (p[p.Length - 1] != '\n')
                 break;
+
+            string part = p.Substring(0, p.Length - 1);
 
             // Get a unique world id
             int id = world.GetUniqueID();
@@ -104,6 +133,9 @@ public class ServerController
             // it doesn't receive snakes before it receives walls
             world.AddSnake(part, id, state);
 
+            // Prints out that snake has connected
+            Console.WriteLine("Player(" + id + ")" + " \"" + part + "\" has joined");
+
             // Change the OnNetworkAction to process commands
             state.OnNetworkAction = ReceiveMessage;
             state.RemoveData(0, part.Length);
@@ -114,42 +146,47 @@ public class ServerController
         string totalData = state.GetData();
         string[] parts = Regex.Split(totalData, @"(?<=[\n])");
 
-        foreach (string part in parts)
+        foreach (string p in parts)
         {
-            if(part.Length == 0)
+            if (p.Length == 0)
                 continue;
 
-            if (part[part.Length - 1] != '\n')
+            if (p[p.Length - 1] != '\n')
                 break;
+            // "{\"moving\":\"left\"}"
+            string part = p.Substring(0, p.Length - 1);
 
-            ControlCommand? command = JsonSerializer.Deserialize<ControlCommand>(part);
-            if (command != null)
+            if (!validCommands.Contains(part))
             {
-                switch (command.moving)
-                {
-                    case "up":
-                        world.Move("up", state);
-                        break;
-
-                    case "down":
-                        world.Move("down", state);
-                        break;
-
-                    case "left":
-                        world.Move("left", state);
-                        break;
-
-                    case "right":
-                        world.Move("right", state);
-                        break;
-
-                    default:
-                        world.Move("none", state);
-                        break;
-                }
+                continue;
             }
 
-            state.RemoveData(0, part.Length);
+            ControlCommand command = JsonSerializer.Deserialize<ControlCommand>(part)!;
+            
+            switch (command.moving)
+            {
+                case "up":
+                    world.Move("up", state);
+                    break;
+
+                case "down":
+                    world.Move("down", state);
+                    break;
+
+                case "left":
+                    world.Move("left", state);
+                    break;
+
+                case "right":
+                    world.Move("right", state);
+                    break;
+
+                default:
+                    world.Move("none", state);
+                    break;
+            }
+
+            state.RemoveData(0, p.Length);
         }
     }
     public void StartMainLoop()
@@ -169,7 +206,7 @@ public class ServerController
 
     private void RemoveClient(long id) 
     {
-        Console.WriteLine("Client" + id + "disconnected");
+        Console.WriteLine("Client " + id + " disconnected");
         lock(clients)
         {
             clients.Remove(id);
@@ -182,9 +219,15 @@ public class ServerController
 
         lock (world.GetSnakeLock())
         {
-            foreach (SocketState client in clients.Values)
+            foreach (Snake s in world.GetSnakes())
             {
+                string snakeString = JsonSerializer.Serialize(s);
 
+                // Sends the json snake objects to all of the clients
+                foreach (SocketState client in clients.Values)
+                {
+                    Networking.Send(client.TheSocket, snakeString + "\n");
+                }
             }
         }
     }

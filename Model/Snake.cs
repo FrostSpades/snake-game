@@ -40,9 +40,7 @@ namespace Model
         private List<Tuple<float, float, float, float>> segments;
 
         // The speed of the snake
-        //private int speed = 6;
-
-        private bool headChanged;
+        private int speed = 6;
 
         [JsonConstructor]
         // Constructor for json objects
@@ -67,19 +65,41 @@ namespace Model
             }
         }
 
-        public Snake(int id, string name, IEnumerable<Snake> snakes, HashSet<Tuple<int, int>> wallLocations, IEnumerable<Powerup> powerups, string uLock, int worldSize)
+        public Snake(int id, string name, IEnumerable<Snake> snakes, IEnumerable<Wall> walls, IEnumerable<Powerup> powerups, string uLock, int worldSize)
         {
             snake = id;
             this.name = name;
-            headChanged = false;
 
-            // Generate Body
-            // Generate Segments
-            // Generate Direction
+            // Default values to be changed later by GenerateBody method
+            body = new();
+            dir = new();
+            segments = new();
+
+            GenerateBody(snakes, walls, powerups, uLock, worldSize);
+
+            score = 0;
+            died = false;
+            alive = true;
+            dc = false;
+            join = true;
+        }
+
+        /// <summary>
+        /// Helper method for generating a body of the snake for spawning and respawning.
+        /// </summary>
+        /// <param name="snakes"></param>
+        /// <param name="walls"></param>
+        /// <param name="powerups"></param>
+        /// <param name="uLock"></param>
+        /// <param name="worldSize"></param>
+        private void GenerateBody(IEnumerable<Snake> snakes, IEnumerable<Wall> walls, IEnumerable<Powerup> powerups, string uLock, int worldSize)
+        {
+            // Initialize body and segments
             body = new();
             segments = new();
-            Random random = new Random();
 
+            // Choose a random direction for the snake to look in
+            Random random = new Random();
             int newDirection = (int)Math.Floor(random.NextDouble() * 4);
 
             switch (newDirection)
@@ -101,17 +121,6 @@ namespace Model
                     break;
             }
 
-            GenerateBody(snakes, wallLocations, powerups, uLock, worldSize);
-
-            score = 0;
-            died = false;
-            alive = true;
-            dc = false;
-            join = true;
-        }
-
-        private void GenerateBody(IEnumerable<Snake> snakes, HashSet<Tuple<int, int>> wallLocations, IEnumerable<Powerup> powerups, string uLock, int worldSize)
-        {
             // Lock so that two snakes can't respawn at the same time
             lock (uLock)
             {
@@ -122,197 +131,57 @@ namespace Model
                 Random random = new Random();
                 int randomSquare = (int)Math.Floor(random.NextDouble() * numOfSquares);
 
-                HashSet<Tuple<int, int>> respawnable = new HashSet<Tuple<int, int>>();
-
-                // Add snake points to the respawnable set
-                foreach (Snake s in snakes)
-                {
-                    foreach (Tuple<float, float, float, float> segment in s.GetSegments())
-                    {
-                        if (segment.Item1 == segment.Item2)
-                        {
-                            if (segment.Item3 > segment.Item4)
-                            {
-                                for (int k = (int)segment.Item4; k <= (int)segment.Item3; k++)
-                                {
-                                    respawnable.Add(new Tuple<int, int>((int)segment.Item1, k));
-                                }
-                            }
-
-                            else
-                            {
-                                for (int k = (int)segment.Item3; k <= (int)segment.Item4; k++)
-                                {
-                                    respawnable.Add(new Tuple<int, int>((int)segment.Item1, k));
-                                }
-                            }
-                        }
-
-                        else
-                        {
-                            if (segment.Item1 > segment.Item2)
-                            {
-                                for (int k = (int)segment.Item2; k <= (int)segment.Item1; k++)
-                                {
-                                    respawnable.Add(new Tuple<int, int>(k, (int)segment.Item3));
-                                }
-                            }
-
-                            else
-                            {
-                                for (int k = (int)segment.Item1; k <= (int)segment.Item2; k++)
-                                {
-                                    respawnable.Add(new Tuple<int, int>(k, (int)segment.Item3));
-                                }
-                            }
-                        }
-                    }
-                }
-
-                foreach (Powerup p in powerups)
-                {
-                    respawnable.Add(new Tuple<int, int>((int)p.GetLocation().X, (int)p.GetLocation().Y));
-                }
 
                 // Try to create snake. If fails, increment to the next square and retry
                 while (true)
                 {
-                    int rowOffset = 120 * (randomSquare / sideLength);
-                    int colOffset = 120 * (randomSquare % sideLength);
+                    int rowOffset = 120 * (randomSquare / sideLength) - (worldSize / 2);
+                    int colOffset = 120 * (randomSquare % sideLength) - (worldSize / 2);
 
-                    // If snake direction is up
-                    if (dir.Equals(new Vector2D(0, -1)))
+                    for (int i = 0; i < 120; i++)
                     {
-                        for (int i = 0; i < 120; i++)
+                        for (int j = 0; j < 120; j++)
                         {
-                            for (int j = 0; j < 120; j++)
+
+                            Tuple<Vector2D, Vector2D, Vector2D, Vector2D> collisionVectors = new(new Vector2D(), new Vector2D(), new Vector2D(), new Vector2D());
+
+                            // Adds the four corners of the snake to collisionVectors
+                            switch (GetDir())
                             {
-                                bool found = true;
+                                case "up":
+                                    collisionVectors = new(new Vector2D(rowOffset + i - 5, colOffset + j - 5), new Vector2D(rowOffset + i + 5, colOffset + j - 5), new Vector2D(rowOffset + i + 5, colOffset + j + 125), new Vector2D(rowOffset + i - 5, colOffset + j + 125));
+                                    break;
 
-                                for (int k = 0; k < 125; k++)
-                                {
-                                    // If there are things in the way, keep searching
-                                    if (respawnable.Contains(new Tuple<int, int>(colOffset + i, rowOffset + j - 5 + k)) || wallLocations.Contains(new Tuple<int, int>(colOffset + i, rowOffset + j - 5 + k)))
-                                    {
-                                        found = false;
-                                        continue;
-                                    }
-                                }
+                                case "down":
+                                    collisionVectors = new(new Vector2D(rowOffset + i - 5, colOffset + j - 125), new Vector2D(rowOffset + i + 5, colOffset + j - 125), new Vector2D(rowOffset + i + 5, colOffset + j + 5), new Vector2D(rowOffset + i - 5, colOffset + j + 5));
+                                    break;
 
-                                if (found)
-                                {
-                                    body.Add(new Vector2D(i, j));
+                                case "left":
+                                    collisionVectors = new(new Vector2D(rowOffset + i - 5, colOffset + j - 5), new Vector2D(rowOffset + i + 125, colOffset + j - 5), new Vector2D(rowOffset + i + 125, colOffset + j + 5), new Vector2D(rowOffset + i - 5, colOffset + j + 5));
+                                    break;
 
-                                    // Add all of the segments to the segments list
-                                    for (int h = 0; h < body.Count - 1; h++)
-                                    {
-                                        segments.Add(new Tuple<float, float, float, float>((float)body[h].GetX(), (float)body[h].GetY(), (float)body[h + 1].GetX(), (float)body[h + 1].GetY()));
-                                    }
-                                    return;
-                                }
+                                case "right":
+                                    collisionVectors = new(new Vector2D(rowOffset + i - 125, colOffset + j - 5), new Vector2D(rowOffset + i + 5, colOffset + j - 5), new Vector2D(rowOffset + i + 5, colOffset + j + 5), new Vector2D(rowOffset + i - 125, colOffset + j + 5));
+                                    break;
                             }
-                        }
-                    }
 
-                    // If snake direction is down
-                    else if (dir.Equals(new Vector2D(0, 1)))
-                    {
-                        for (int i = 0; i < 120; i++)
-                        {
-                            for (int j = 0; j < 120; j++)
+                            // If there are collisions, continue loop
+                            if (CheckForCollisions(snakes, walls, powerups, collisionVectors))
                             {
-                                bool found = true;
-
-                                for (int k = 0; k < 125; k++)
-                                {
-                                    // If there are things in the way, keep searching
-                                    if (respawnable.Contains(new Tuple<int, int>(colOffset + i, rowOffset + j + 5 - k)) || wallLocations.Contains(new Tuple<int, int>(colOffset + i, rowOffset + j + 5 - k)))
-                                    {
-                                        found = false;
-                                        continue;
-                                    }
-                                }
-
-                                if (found)
-                                {
-                                    body.Add(new Vector2D(i, j));
-
-                                    // Add all of the segments to the segments list
-                                    for (int h = 0; h < body.Count - 1; h++)
-                                    {
-                                        segments.Add(new Tuple<float, float, float, float>((float)body[h].GetX(), (float)body[h].GetY(), (float)body[h + 1].GetX(), (float)body[h + 1].GetY()));
-                                    }
-                                    return;
-                                }
+                                continue;
                             }
-                        }
-                    }
 
-                    // If snake direction is left
-                    else if (dir.Equals(new Vector2D(-1, 0)))
-                    {
-                        for (int i = 0; i < 120; i++)
-                        {
-                            for (int j = 0; j < 120; j++)
+                            // If successful, add the new body
+                            body.Add((new Vector2D(i + rowOffset, j + colOffset)) - (dir*120));
+                            body.Add(new Vector2D(i + rowOffset, j + colOffset));
+
+                            // Add all of the segments to the segments list
+                            for (int k = 0; k < body.Count - 1; k++)
                             {
-                                bool found = true;
-
-                                for (int k = 0; k < 125; k++)
-                                {
-                                    // If there are things in the way, keep searching
-                                    if (respawnable.Contains(new Tuple<int, int>(colOffset + i + 5 - k, rowOffset + j)) || wallLocations.Contains(new Tuple<int, int>(colOffset + i + 5 - k, rowOffset + j)))
-                                    {
-                                        found = false;
-                                        continue;
-                                    }
-                                }
-
-                                if (found)
-                                {
-                                    body.Add(new Vector2D(i, j));
-
-                                    // Add all of the segments to the segments list
-                                    for (int h = 0; h < body.Count - 1; h++)
-                                    {
-                                        segments.Add(new Tuple<float, float, float, float>((float)body[h].GetX(), (float)body[h].GetY(), (float)body[h + 1].GetX(), (float)body[h + 1].GetY()));
-                                    }
-                                    return;
-                                }
+                                segments.Add(new Tuple<float, float, float, float>((float)body[k].GetX(), (float)body[k].GetY(), (float)body[k + 1].GetX(), (float)body[k + 1].GetY()));
                             }
-                        }
-                    }
 
-                    // If snake direction is right
-                    else
-                    {
-                        for (int i = 0; i < 120; i++)
-                        {
-                            for (int j = 0; j < 120; j++)
-                            {
-                                bool found = true;
-
-                                for (int k = 0; k < 125; k++)
-                                {
-                                    // If there are things in the way, keep searching
-                                    if (respawnable.Contains(new Tuple<int, int>(colOffset + i - 5 + k, rowOffset + j)) || wallLocations.Contains(new Tuple<int, int>(colOffset + i - 5 + k, rowOffset + j)))
-                                    {
-                                        found = false;
-                                        continue;
-                                    }
-                                }
-
-                                if (found)
-                                {
-                                    body.Add(new Vector2D(i, j));
-
-                                    // Add all of the segments to the segments list
-                                    for (int h = 0; h < body.Count - 1; h++)
-                                    {
-                                        segments.Add(new Tuple<float, float, float, float>((float)body[h].GetX(), (float)body[h].GetY(), (float)body[h + 1].GetX(), (float)body[h + 1].GetY()));
-                                    }
-                                    return;
-                                }
-                            }
+                            return;
                         }
                     }
 
@@ -320,6 +189,53 @@ namespace Model
                 }
             
             }
+        }
+
+        /// <summary>
+        /// Helper method for determining whether a tested segment will spawn with collisions.
+        /// </summary>
+        /// <param name="snakes"></param>
+        /// <param name="walls"></param>
+        /// <param name="powerups"></param>
+        /// <param name="collisionVectors"></param>
+        /// <returns></returns>
+        private bool CheckForCollisions(IEnumerable<Snake> snakes, IEnumerable<Wall> walls, IEnumerable<Powerup> powerups, Tuple<Vector2D, Vector2D, Vector2D, Vector2D> collisionVectors)
+        {
+            // Check for wall collisions
+            foreach (Wall w in walls)
+            {
+                if (w.Collision(collisionVectors))
+                {
+                    return true;
+                }
+            }
+
+            // Check for snake collisions
+            foreach (Snake s in snakes)
+            {
+                if (s.Collision(collisionVectors))
+                {
+                    return true;
+                }
+            }
+
+            // Check for powerup collisions
+            foreach (Powerup p in powerups)
+            {
+                if (p.Collision(collisionVectors))
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        public bool Collision(Tuple<Vector2D, Vector2D, Vector2D, Vector2D> segments)
+        {
+            // NEEDS TO BE IMPLEMENTED
+
+            return false;
         }
 
         /// <summary>
@@ -389,61 +305,74 @@ namespace Model
                 return;
             }
 
-            string currentDirection = GetDir();
+            Vector2D currentDirection = body[body.Count - 1] - body[body.Count - 2];
+            currentDirection.Clamp();
 
             switch (dir)
             {
                 case "left":
-                    if (currentDirection != "right")
+                    if (currentDirection != new Vector2D(1, 0))
                     {
                         this.dir = new Vector2D(-1, 0);
-                        headChanged = dir == currentDirection;
                     }
                     break;
                 case "right":
-                    if (currentDirection != "left")
+                    if (currentDirection != new Vector2D(-1, 0))
                     {
                         this.dir = new Vector2D(1, 0);
-                        headChanged = dir == currentDirection;
                     }
                     break;
                 case "up":
-                    if (currentDirection != "down")
+                    if (currentDirection != new Vector2D(0, -1))
                     {
                         this.dir = new Vector2D(0, -1);
-                        headChanged = dir == currentDirection;
                     }
                     break;
                 case "down":
-                    if (currentDirection != "up")
+                    if (currentDirection != new Vector2D(0, 1))
                     {
                         this.dir = new Vector2D(0, 1);
-                        headChanged = dir == currentDirection;
                     }
                     break;
             }
         }
 
-        public void Move()
+        public void Update()
         {
-            Vector2D tail = body[0];
-            Vector2D afterTail = body[1];
-            
+            Vector2D currentDirection = body[body.Count - 1] - body[body.Count - 2];
+            currentDirection.Clamp();
+
+            bool headChanged = !currentDirection.Equals(dir);
+
             // If the head changed directions, add a new head
             if (headChanged)
             {
-                Vector2D newHead = body[body.Count - 1] + (dir * 6);
+                Vector2D newHead = body[body.Count - 1] + (dir * speed);
                 body.Add(newHead);
-
-                // Set head changed back to false
-                headChanged = false;
             }
-            // If the head did not change directions, change the head
+            // If the head did not change directions, change the head value
             else
             {
-                body[body.Count - 1] += (dir * 6);
+                body[body.Count - 1] += (dir * speed);
             }
 
+            Vector2D tail = body[0];
+            Vector2D afterTail = body[1];
+
+            Vector2D normalized = (afterTail - tail);
+            normalized.Clamp();
+
+            Vector2D newTail = tail + (normalized * speed);
+
+            if (newTail.Equals(afterTail))
+            {
+                body.RemoveAt(0);
+            }
+            else
+            {
+                body.RemoveAt(0);
+                body.Insert(0, newTail);
+            }
         }
     }
 }

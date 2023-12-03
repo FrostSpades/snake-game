@@ -20,13 +20,11 @@ namespace Model
         [JsonInclude]
         public string moving;
 
-        /// <summary>
-        /// Constructor that assigns the direction to the field.
-        /// </summary>
-        /// <param name="direction"></param>
-        public ControlCommand(string direction) 
+        [JsonConstructor]
+        public ControlCommand(string moving)
         {
-            moving = direction;
+            this.moving = moving;
         }
+
     }
 }
