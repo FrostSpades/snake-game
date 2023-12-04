@@ -1,1 +1,1 @@
-C:\Users\mhgar\Source\Repos\game-maryfrost_game\SnakeClient\SnakeClient.csproj;x64
+C:\Users\emand\Source\Repos\game-maryfrost_game\SnakeClient\SnakeClient.csproj;x64

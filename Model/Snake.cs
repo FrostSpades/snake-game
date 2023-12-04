@@ -43,6 +43,12 @@ namespace Model
 
         // The speed of the snake
         private int speed = 6;
+        private int powerupFrames = 24;
+
+        private int currentRespawnFrames;
+
+        private bool eatenPowerup;
+        private int currentPowerupFrames;
 
         [JsonConstructor]
         // Constructor for json objects
@@ -60,6 +66,10 @@ namespace Model
             world = null;
 
             segments = new();
+            currentRespawnFrames = 0;
+
+            eatenPowerup = false;
+            powerupFrames = 0;
 
             // Add all of the segments to the segments list
             for (int i = 0; i < body.Count - 1; i++)
@@ -81,6 +91,7 @@ namespace Model
 
             GenerateBody(snakes, walls, powerups, uLock, worldSize);
 
+            currentRespawnFrames = 0;
             score = 0;
             died = false;
             alive = true;
@@ -128,7 +139,7 @@ namespace Model
             // Lock so that two snakes can't respawn at the same time
             lock (uLock)
             {
-                int sideLength = (worldSize - 10) / 120;
+                int sideLength = (worldSize - 240) / 120;
                 int numOfSquares = sideLength * sideLength;
 
                 // Generate a random 120 by 120 square
@@ -139,8 +150,8 @@ namespace Model
                 // Try to create snake. If fails, increment to the next square and retry
                 while (true)
                 {
-                    int rowOffset = 120 * (randomSquare / sideLength) - (worldSize / 2);
-                    int colOffset = 120 * (randomSquare % sideLength) - (worldSize / 2);
+                    int rowOffset = (120 * (randomSquare / sideLength) + 120) - (worldSize / 2);
+                    int colOffset = (120 * (randomSquare % sideLength) + 120) - (worldSize / 2);
 
                     for (int i = 0; i < 120; i++)
                     {
@@ -185,29 +196,39 @@ namespace Model
         /// <returns></returns>
         private bool CheckForCollisions(IEnumerable<Snake> snakes, IEnumerable<Wall> walls, IEnumerable<Powerup> powerups, Vector2D head)
         {
-            // Check for wall collisions
-            foreach (Wall w in walls)
+            lock (world!.GetSnakeLock())
             {
-                if (w.Collision(head, dir))
+                // Check for wall collisions
+                foreach (Wall w in walls)
                 {
-                    return true;
+                    if (w.Collision(head, dir))
+                    {
+                        return true;
+                    }
                 }
-            }
 
-            // Check for snake collisions
-            foreach (Snake s in snakes)
-            {
-                if (s.Collision(head, dir))
+                // Check for snake collisions
+                foreach (Snake s in snakes)
                 {
-                    return true;
+                    if (s.Collision(head, dir))
+                    {
+                        return true;
+                    }
                 }
+                return false;
             }
+            
+        }
 
+        private bool CollisionPowerup(Vector2D head)
+        {
+            IEnumerable<Powerup> powerups = world!.GetPowerups();
             // Check for powerup collisions
             foreach (Powerup p in powerups)
             {
-                if (p.Collision(head, dir))
+                if (p.CollisionRectangle(head, head))
                 {
+                    p.died = true;
                     return true;
                 }
             }
@@ -216,39 +237,147 @@ namespace Model
         }
         private bool CheckForCollisionsBody(IEnumerable<Snake> snakes, IEnumerable<Wall> walls, IEnumerable<Powerup> powerups, Vector2D head)
         {
-            // Check for wall collisions
-            foreach (Wall w in walls)
+            lock (world!.GetSnakeLock())
             {
-                if (w.CollisionRectangle(head, (dir*-120)+head))
+                // Check for wall collisions
+                foreach (Wall w in walls)
                 {
-                    return true;
+                    if (w.CollisionRectangle(head, (dir * -120) + head))
+                    {
+                        return true;
+                    }
                 }
+
+                // Check for snake collisions
+                foreach (Snake s in snakes)
+                {
+                    if (s.CollisionRectangle(head, (dir * -120) + head))
+                    {
+                        return true;
+                    }
+                }
+
+                // Check for powerup collisions
+                foreach (Powerup p in powerups)
+                {
+                    if (p.CollisionRectangle(head, (dir * -120) + head))
+                    {
+                        return true;
+                    }
+                }
+
+                return false;
+            }
+        }
+
+        public bool Collision(Vector2D head, Vector2D dir)
+        {
+            if (!alive)
+            {
+                return false;
             }
 
-            // Check for snake collisions
-            foreach (Snake s in snakes)
-            {
-                if (s.Collision(head, dir))
-                {
-                    return true;
-                }
-            }
+            Vector2D topOfHead = head + (dir * 10);
 
-            // Check for powerup collisions
-            foreach (Powerup p in powerups)
+            for (int i = 0; i < body.Count - 1; i++)
             {
-                if (p.Collision(head, dir))
+                if (body[i].X == body[i + 1].X)
                 {
-                    return true;
+                    if (body[i].Y > body[i + 1].Y)
+                    {
+                        if (body[i + 1].Y - 5 < topOfHead.Y && topOfHead.Y < body[i].Y + 5)
+                        {
+                            if (body[i].X - 5 < topOfHead.X && topOfHead.X < body[i].X + 5)
+                            {
+                                return true;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        if (body[i].Y - 5 < topOfHead.Y && topOfHead.Y < body[i + 1].Y + 5)
+                        {
+                            if (body[i].X - 5 < topOfHead.X && topOfHead.X < body[i].X + 5)
+                            {
+                                return true;
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    if (body[i].X > body[i + 1].X)
+                    {
+                        if (body[i + 1].X - 5 < topOfHead.X && topOfHead.X < body[i].X + 5)
+                        {
+                            if (body[i].Y - 5 < topOfHead.Y && topOfHead.Y < body[i].Y + 5)
+                            {
+                                return true;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        if (body[i].X - 5 < topOfHead.X && topOfHead.X < body[i + 1].X + 5)
+                        {
+                            if (body[i].Y - 5 < topOfHead.Y && topOfHead.Y < body[i].Y + 5)
+                            {
+                                return true;
+                            }
+                        }
+                    }
                 }
             }
 
             return false;
         }
 
-        public bool Collision(Vector2D head, Vector2D dir)
+        public bool CollisionRectangle(Vector2D head, Vector2D tail)
         {
-            
+            if (!alive)
+            {
+                return false;
+            }
+
+            for (int i = 0; i < body.Count - 1; i++)
+            {
+                List<Vector2D> snakePoints = World.CalculatePoint(head, tail, 5);
+                List<Vector2D> rectanglePoints = World.CalculatePoint(body[i], body[i+1], 5);
+                foreach (Vector2D point in snakePoints)
+                {
+                    if (rectanglePoints[0].X < point.X && point.X < rectanglePoints[1].X)
+                    {
+                        if (rectanglePoints[0].Y < point.Y && point.Y < rectanglePoints[2].Y)
+                        {
+                            return true;
+                        }
+                    }
+                }
+                foreach (Vector2D point in rectanglePoints)
+                {
+                    if (snakePoints[0].X < point.X && point.X < snakePoints[1].X)
+                    {
+                        if (snakePoints[0].Y < point.Y && point.Y < snakePoints[2].Y)
+                        {
+                            return true;
+                        }
+                    }
+                }
+                if (snakePoints[0].X > rectanglePoints[0].X && snakePoints[0].X < rectanglePoints[1].X && snakePoints[0].Y < rectanglePoints[0].Y)
+                {
+                    if (snakePoints[3].Y > rectanglePoints[0].Y)
+                    {
+                        return true;
+                    }
+                }
+                if (rectanglePoints[0].X > snakePoints[0].X && rectanglePoints[0].X < snakePoints[1].X && rectanglePoints[0].Y < snakePoints[0].Y)
+                {
+                    if (rectanglePoints[3].Y > snakePoints[0].Y)
+                    {
+                        return true;
+                    }
+                }
+            }
 
             return false;
         }
@@ -315,6 +444,10 @@ namespace Model
 
         public void SetDirection(string dir)
         {
+            if (!alive)
+            {
+                return;
+            }
             if (dir == "none")
             {
                 return;
@@ -352,6 +485,20 @@ namespace Model
             }
         }
 
+        public void AddDeadFrame()
+        {
+            currentRespawnFrames += 1;
+
+            if (currentRespawnFrames == world!.GetRespawnFrames())
+            {
+                currentRespawnFrames = 0;
+                alive = true;
+
+                GenerateBody(world.GetSnakes(), world.GetWalls(), world.GetPowerups(), world.GetSnakeLock(), world.GetWorldSize());
+                score = 0;
+            }
+        }
+
         /// <summary>
         /// Updates the Snake's body position
         /// </summary>
@@ -374,29 +521,56 @@ namespace Model
                 body[body.Count - 1] += (dir * speed);
             }
 
-            Vector2D tail = body[0];
-            Vector2D afterTail = body[1];
-
-            Vector2D normalized = (afterTail - tail);
-            normalized.Clamp();
-
-            Vector2D newTail = tail + (normalized * speed);
-
-            if (newTail.Equals(afterTail))
+            if (!eatenPowerup)
             {
-                body.RemoveAt(0);
+                Vector2D tail = body[0];
+                Vector2D afterTail = body[1];
+
+                Vector2D normalized = (afterTail - tail);
+                normalized.Clamp();
+
+                Vector2D newTail = tail + (normalized * speed);
+
+                if (newTail.Equals(afterTail))
+                {
+                    body.RemoveAt(0);
+                }
+                else
+                {
+                    body.RemoveAt(0);
+                    body.Insert(0, newTail);
+                }
             }
+
+            // If it has eaten a powerup, don't move the tail
             else
             {
-                body.RemoveAt(0);
-                body.Insert(0, newTail);
+                currentPowerupFrames += 1;
+
+                if (currentPowerupFrames == powerupFrames)
+                {
+                    currentPowerupFrames = 0;
+                    eatenPowerup = false;
+                }
             }
+            
 
             // Check for collisions
             if (CheckForCollisions(world!.GetSnakes(), world.GetWalls(), world.GetPowerups(), body[body.Count - 1]))
             {
                 died = true;
                 alive = false;
+                eatenPowerup = false;
+                score = 0;
+                currentPowerupFrames = 0;
+            }
+
+            // If there is a powerup collision, set the eaten powerup field to true
+            if (CollisionPowerup(body[body.Count - 1]))
+            {
+                eatenPowerup = true;
+                currentPowerupFrames = 0;
+                score += 1;
             }
         }
     }

@@ -16,10 +16,14 @@ public class ServerController
     private Dictionary<long, SocketState> clients;
     private HashSet<string> validCommands;
 
+    // Message Queue for sending messages
+    private Queue<string> messageQueue;
+
     public ServerController()
     {
         world = new World();
         clients = new();
+        messageQueue = new();
 
         validCommands = new HashSet<string>
             {
@@ -230,6 +234,51 @@ public class ServerController
                     if (world.SnakeExists(client))
                     {
                         Networking.Send(client.TheSocket, snakeString + "\n");
+                    }
+                }
+
+                if (s.died)
+                {
+                    s.died = false;
+                }
+            }
+
+            // List of powerups to remove
+            List<Powerup> removeList = new();
+
+            foreach (Powerup p in world.GetPowerups())
+            {
+                string powerupString = JsonSerializer.Serialize(p);
+
+                // Sends the json powerup object to all of the clients
+                foreach (SocketState client in clients.Values)
+                {
+                    if (world.SnakeExists(client))
+                    {
+                        Networking.Send(client.TheSocket, powerupString + "\n");
+                    }
+                }
+
+                if (p.died)
+                {
+                    removeList.Add(p);
+                }
+            }
+
+            foreach (Powerup p in removeList)
+            {
+                world.RemovePowerup(p);
+            }
+
+            while (messageQueue.Count > 0)
+            {
+                string message = messageQueue.Dequeue();
+
+                foreach (SocketState client in clients.Values)
+                {
+                    if (world.SnakeExists(client))
+                    {
+                        Networking.Send(client.TheSocket, message + "\n");
                     }
                 }
             }
