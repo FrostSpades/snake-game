@@ -16,14 +16,23 @@ public class ServerController
     private Dictionary<long, SocketState> clients;
     private HashSet<string> validCommands;
 
-    // Message Queue for sending messages
-    private Queue<string> messageQueue;
+    // Message Queues for sending items on main thread
+    private Queue<Tuple<string, SocketState>> messageQueue;
+    private Queue<SocketState> disconnectQueue;
+
+    // Fields for printing out frame count each second
+    private long totalMillisecondsElapsed;
+    private int frameCount;
 
     public ServerController()
     {
         world = new World();
         clients = new();
         messageQueue = new();
+        disconnectQueue = new();
+
+        totalMillisecondsElapsed = 0;
+        frameCount = 0;
 
         validCommands = new HashSet<string>
             {
@@ -56,9 +65,11 @@ public class ServerController
             return;
         }
 
-        lock(world.GetSnakeLock())
+        lock(clients)
         {
             clients[state.ID] = state;
+
+            Debug.WriteLine("");
         }
 
         // Print out the IP address and port
@@ -71,7 +82,7 @@ public class ServerController
         }
         catch
         {
-            RemoveClient(state.ID);
+            RemoveClient(state);
             return;
         }
         
@@ -84,7 +95,7 @@ public class ServerController
     {
         if(state.ErrorOccurred)
         {
-            RemoveClient(state.ID);
+            RemoveClient(state);
             return;
         }
 
@@ -96,7 +107,7 @@ public class ServerController
     {
         if (state.ErrorOccurred)
         {
-            RemoveClient(state.ID);
+            RemoveClient(state);
             return;
         }
         ProcessCommand(state);
@@ -171,25 +182,46 @@ public class ServerController
             switch (command.moving)
             {
                 case "up":
-                    world.Move("up", state);
+                    //world.Move("up", state);
+                    lock (messageQueue)
+                    {
+                        messageQueue.Enqueue(new Tuple<string, SocketState>("up", state));
+                    }
                     break;
 
                 case "down":
-                    world.Move("down", state);
+                    //world.Move("down", state);
+                    lock (messageQueue)
+                    {
+                        messageQueue.Enqueue(new Tuple<string, SocketState>("down", state));
+                    }
                     break;
 
                 case "left":
-                    world.Move("left", state);
+                    //world.Move("left", state);
+                    lock (messageQueue)
+                    {
+                        messageQueue.Enqueue(new Tuple<string, SocketState>("left", state));
+                    }
                     break;
 
                 case "right":
-                    world.Move("right", state);
+                    //world.Move("right", state);
+                    lock (messageQueue)
+                    {
+                        messageQueue.Enqueue(new Tuple<string, SocketState>("right", state));
+                    }
                     break;
 
                 default:
-                    world.Move("none", state);
+                    //world.Move("none", state);
+                    lock (messageQueue)
+                    {
+                        messageQueue.Enqueue(new Tuple<string, SocketState>("state", state));
+                    }
                     break;
             }
+            
 
             state.RemoveData(0, p.Length);
         }
@@ -204,76 +236,92 @@ public class ServerController
             {
                 continue;
             }
+
+            totalMillisecondsElapsed += stopwatch.ElapsedMilliseconds;
+            frameCount += 1;
+
+            // If one total second has elapsed, print out the frame count
+            if (totalMillisecondsElapsed >= 1000)
+            {
+                totalMillisecondsElapsed = 0;
+
+                Console.WriteLine("FPS: " + frameCount);
+
+                frameCount = 0;
+            }
+
             stopwatch.Restart();
             Update();
         }
     }
 
-    private void RemoveClient(long id) 
+    private void RemoveClient(SocketState state) 
     {
-        Console.WriteLine("Client " + id + " disconnected");
-        lock(world.GetSnakeLock())
+        Console.WriteLine("Client " + state.ID + " disconnected");
+        lock(clients)
         {
-            clients.Remove(id);
+            clients.Remove(state.ID);
+        }
+        lock(disconnectQueue)
+        {
+            disconnectQueue.Enqueue(state);
         }
     }
 
     private void Update()
     {
+
+        // Update the snakes' movements
+        lock (messageQueue)
+        {
+            while (messageQueue.Count > 0)
+            {
+                Tuple<string, SocketState> command = messageQueue.Dequeue();
+                world.Move(command.Item1, command.Item2);
+            }
+        }
+
+        // Update the world
         world.Update();
 
-        lock (world.GetSnakeLock())
+        // Send the objects
+        List<string> messages = world.GetSerializedObjects();
+
+        lock (clients)
         {
-            foreach (Snake s in world.GetSnakes())
+            foreach (string message in messages)
             {
-                string snakeString = JsonSerializer.Serialize(s);
-
-                // Sends the json snake objects to all of the clients
-                foreach (SocketState client in clients.Values)
-                {
-                    if (world.SnakeExists(client))
-                    {
-                        Networking.Send(client.TheSocket, snakeString + "\n");
-                    }
-                }
-
-                if (s.died)
-                {
-                    s.died = false;
-                }
-            }
-
-            // List of powerups to remove
-            List<Powerup> removeList = new();
-
-            foreach (Powerup p in world.GetPowerups())
-            {
-                string powerupString = JsonSerializer.Serialize(p);
-
                 // Sends the json powerup object to all of the clients
                 foreach (SocketState client in clients.Values)
                 {
                     if (world.SnakeExists(client))
                     {
-                        Networking.Send(client.TheSocket, powerupString + "\n");
+                        Networking.Send(client.TheSocket, message + "\n");
                     }
                 }
-
-                if (p.died)
-                {
-                    removeList.Add(p);
-                }
             }
+        }
 
-            foreach (Powerup p in removeList)
+        // Send the disconnectedSnakes
+        List<string> disconnectedSnakes = new();
+        lock (disconnectQueue)
+        {
+            while (disconnectQueue.Count > 0)
             {
-                world.RemovePowerup(p);
+                SocketState client = disconnectQueue.Dequeue();
+
+                string json = world.Disconnect(client);
+                
+                disconnectedSnakes.Add(json);
             }
+        }
 
-            while (messageQueue.Count > 0)
+        // Send the disconnectedSnakes data
+        lock (clients)
+        {
+            foreach (string message in disconnectedSnakes)
             {
-                string message = messageQueue.Dequeue();
-
+                // Sends the json powerup object to all of the clients
                 foreach (SocketState client in clients.Values)
                 {
                     if (world.SnakeExists(client))

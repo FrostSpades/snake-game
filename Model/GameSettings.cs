@@ -20,12 +20,15 @@ public class GameSettings
     public int UniverseSize;
     [DataMember]
     public List<Wall> Walls;
+    [DataMember]
+    public bool SpeedMode;
 
     public GameSettings()
     {
         MSPerFrame = 0;
         RespawnRate = 0;
         UniverseSize = 0;
+        SpeedMode = false;
         Walls = new();
     }
 }

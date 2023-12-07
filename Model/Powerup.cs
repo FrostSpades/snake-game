@@ -74,37 +74,35 @@ namespace Model
             IEnumerable<Wall> walls = world.GetWalls();
             IEnumerable<Powerup> powerups = world.GetPowerups();
 
-            lock (world!.GetSnakeLock())
+            // Check for wall collisions
+            foreach (Wall w in walls)
             {
-                // Check for wall collisions
-                foreach (Wall w in walls)
+                if (w.CollisionRectangle(head, head))
                 {
-                    if (w.CollisionRectangle(head, head))
-                    {
-                        return true;
-                    }
+                    return true;
                 }
-
-                // Check for snake collisions
-                foreach (Snake s in snakes)
-                {
-                    if (s.CollisionRectangle(head, head))
-                    {
-                        return true;
-                    }
-                }
-
-                // Check for powerup collisions
-                foreach (Powerup p in powerups)
-                {
-                    if (p.CollisionRectangle(head, head))
-                    {
-                        return true;
-                    }
-                }
-
-                return false;
             }
+
+            // Check for snake collisions
+            foreach (Snake s in snakes)
+            {
+                if (s.CollisionRectangle(head, head))
+                {
+                    return true;
+                }
+            }
+
+            // Check for powerup collisions
+            foreach (Powerup p in powerups)
+            {
+                if (p.CollisionRectangle(head, head))
+                {
+                    return true;
+                }
+            }
+
+            return false;
+            
         }
 
 
@@ -119,7 +117,7 @@ namespace Model
 
         public bool CollisionRectangle(Vector2D head, Vector2D tail)
         {
-            List<Vector2D> snakePoints = World.CalculatePoint(head, tail, 5);
+            List<Vector2D> pPoints = World.CalculatePoint(head, tail, 5);
 
             Vector2D point1 = new Vector2D(loc);
             point1.X -= 5;
@@ -136,11 +134,11 @@ namespace Model
 
             List<Vector2D> rectanglePoints = new List<Vector2D>() {point1, point2, point3, point4};
 
-            foreach (Vector2D point in snakePoints)
+            foreach (Vector2D point in pPoints)
             {
-                if (rectanglePoints[0].X < point.X && point.X < rectanglePoints[1].X)
+                if (rectanglePoints[0].X <= point.X && point.X <= rectanglePoints[1].X)
                 {
-                    if (rectanglePoints[0].Y < point.Y && point.Y < rectanglePoints[2].Y)
+                    if (rectanglePoints[0].Y <= point.Y && point.Y <= rectanglePoints[2].Y)
                     {
                         return true;
                     }
@@ -148,24 +146,38 @@ namespace Model
             }
             foreach (Vector2D point in rectanglePoints)
             {
-                if (snakePoints[0].X < point.X && point.X < snakePoints[1].X)
+                if (pPoints[0].X <= point.X && point.X <= pPoints[1].X)
                 {
-                    if (snakePoints[0].Y < point.Y && point.Y < snakePoints[2].Y)
+                    if (pPoints[0].Y <= point.Y && point.Y <= pPoints[2].Y)
                     {
                         return true;
                     }
                 }
             }
-            if (snakePoints[0].X > rectanglePoints[0].X && snakePoints[0].X < rectanglePoints[1].X && snakePoints[0].Y < rectanglePoints[0].Y)
+            if (pPoints[0].X >= rectanglePoints[0].X && pPoints[0].X <= rectanglePoints[1].X && pPoints[0].Y <= rectanglePoints[0].Y)
             {
-                if (snakePoints[3].Y > rectanglePoints[0].Y)
+                if (pPoints[3].Y >= rectanglePoints[0].Y)
                 {
                     return true;
                 }
             }
-            if (rectanglePoints[0].X > snakePoints[0].X && rectanglePoints[0].X < snakePoints[1].X && rectanglePoints[0].Y < snakePoints[0].Y)
+            if (pPoints[1].X >= rectanglePoints[0].X && pPoints[1].X <= rectanglePoints[1].X && pPoints[1].Y <= rectanglePoints[0].Y)
             {
-                if (rectanglePoints[3].Y > snakePoints[0].Y)
+                if (pPoints[2].Y >= rectanglePoints[1].Y)
+                {
+                    return true;
+                }
+            }
+            if (rectanglePoints[0].X >= pPoints[0].X && rectanglePoints[0].X <= pPoints[1].X && rectanglePoints[0].Y <= pPoints[0].Y)
+            {
+                if (rectanglePoints[3].Y >= pPoints[0].Y)
+                {
+                    return true;
+                }
+            }
+            if (rectanglePoints[1].X >= pPoints[0].X && rectanglePoints[1].X <= pPoints[1].X && rectanglePoints[1].Y <= pPoints[0].Y)
+            {
+                if (rectanglePoints[2].Y >= pPoints[1].Y)
                 {
                     return true;
                 }

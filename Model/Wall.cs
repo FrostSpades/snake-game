@@ -113,7 +113,7 @@ namespace Model
 
         public bool Collision(Vector2D head, Vector2D dir)
         {
-            Vector2D topOfHead = head + (dir * 10);
+            Vector2D topOfHead = head + (dir * 5);
 
             if (p1.X == p2.X)
             {
@@ -166,43 +166,8 @@ namespace Model
         }
         public bool CollisionRectangle(Vector2D head, Vector2D tail)
         {
-            List<Vector2D> snakePoints = World.CalculatePoint(head, tail, 5);
-            List<Vector2D> rectanglePoints = World.CalculatePoint(p1, p2, 25);
-            foreach(Vector2D point in snakePoints)
-            {
-                if (rectanglePoints[0].X < point.X && point.X < rectanglePoints[1].X)
-                {
-                    if (rectanglePoints[0].Y < point.Y&& point.Y < rectanglePoints[2].Y)
-                    {
-                        return true; 
-                    }
-                }
-            }
-            foreach (Vector2D point in rectanglePoints)
-            {
-                if (snakePoints[0].X < point.X && point.X < snakePoints[1].X)
-                {
-                    if (snakePoints[0].Y < point.Y && point.Y < snakePoints[2].Y)
-                    {
-                        return true;
-                    }
-                }
-            }
-            if (snakePoints[0].X > rectanglePoints[0].X && snakePoints[0].X < rectanglePoints[1].X && snakePoints[0].Y < rectanglePoints[0].Y)
-            {
-                if (snakePoints[3].Y > rectanglePoints[0].Y)
-                {
-                    return true; 
-                }
-            }
-            if (rectanglePoints[0].X > snakePoints[0].X && rectanglePoints[0].X < snakePoints[1].X && rectanglePoints[0].Y < snakePoints[0].Y)
-            {
-                if (rectanglePoints[3].Y > snakePoints[0].Y)
-                {
-                    return true;
-                }
-            }
-            return false;
+            // Simulate a collision between two rectangles
+            return World.CollisionRectangle(head, tail, 5, p1, p2, 25);
         }
         
     }

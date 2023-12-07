@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Net.WebSockets;
 using System.Runtime.Serialization;
@@ -18,7 +19,9 @@ public class World
     private Dictionary<SocketState, Snake> snakes;
     private Dictionary<int, Powerup> powerups;
     private int uniqueSnakeID, uniquePowerupID;
-    private string snakeLock;
+    private string snakeLock, powerupLock;
+
+    private bool speedMode;
 
     private int maxPowerups = 20;
     private int maxPowerupFrames = 75;
@@ -29,6 +32,7 @@ public class World
         powerups = new();
 
         snakeLock = "snakeLock";
+        powerupLock = "powerupLock";
 
         // Import GameSettings from settings.xml file
         string filePath = "settings.xml";
@@ -45,12 +49,17 @@ public class World
         }
 
         settings = tempSettings;
+
+        speedMode = settings.SpeedMode;
         uniquePowerupID = 0;
     }
 
     public void Move(string dir, SocketState state)
     {
-        snakes[state].SetDirection(dir);
+        lock (snakeLock)
+        {
+            snakes[state].SetDirection(dir);
+        }
     }
 
     public int GetMSPerFrame()
@@ -73,15 +82,22 @@ public class World
 
     public IEnumerable<Powerup> GetPowerups()
     {
-        return powerups.Values;
+        lock (powerupLock)
+        {
+            return powerups.Values;
+        }
+    }
+
+    public bool GetSpeedMode()
+    {
+        return speedMode;
     }
 
     public void AddSnake(string name, int id, SocketState state)
     {
-        Snake newSnake = new Snake(id, name, GetSnakes(), GetWalls(), GetPowerups(), snakeLock, settings.UniverseSize, this);
-        
         lock (snakeLock)
         {
+            Snake newSnake = new Snake(id, name, settings.UniverseSize, this);
             snakes.Add(state, newSnake);
         }
     }
@@ -101,7 +117,9 @@ public class World
                     s.AddDeadFrame();
                 }
             }
-
+        }
+        lock (powerupLock)
+        {
             if (powerups.Count < maxPowerups)
             {
                 if (currentPowerupFrames == 0)
@@ -125,6 +143,64 @@ public class World
                 }
             }
         }
+    }
+
+    public List<string> GetSerializedObjects()
+    {
+        List<string> objects = new();
+        lock (snakeLock)
+        {
+            foreach (Snake s in snakes.Values)
+            {
+                string snakeString = JsonSerializer.Serialize(s);
+
+                if (s.died)
+                {
+                    s.died = false;
+                }
+                objects.Add(snakeString);
+            }
+        }
+
+        lock (powerupLock)
+        {
+            // List of powerups to remove
+            List<Powerup> removeList = new();
+
+            foreach (Powerup p in powerups.Values)
+            {
+                string powerupString = JsonSerializer.Serialize(p);
+
+                if (p.died)
+                {
+                    removeList.Add(p);
+                }
+
+                objects.Add(powerupString);
+            }
+
+            foreach (Powerup p in removeList)
+            {
+                powerups.Remove(p.power);
+            }
+        }
+
+        return objects;
+    }
+
+    public string Disconnect(SocketState state)
+    {
+        string s;
+        lock (snakeLock)
+        {
+            snakes[state].dc = true;
+
+            s = JsonSerializer.Serialize(snakes[state]);
+
+            snakes.Remove(state);
+        }
+
+        return s;
     }
 
     public string GetSnakeLock()
@@ -154,11 +230,13 @@ public class World
         return snakes.ContainsKey(name);
     }
 
-    public void RemovePowerup(Powerup p)
-    {
-        powerups.Remove(p.power);
-    }
-
+    /// <summary>
+    /// Helper method for calculating the four corner points given a rectange and a size.
+    /// </summary>
+    /// <param name="head"></param>
+    /// <param name="tail"></param>
+    /// <param name="size"></param>
+    /// <returns></returns>
     public static List<Vector2D> CalculatePoint(Vector2D head, Vector2D tail, int size)
     {
         if (head.X == tail.X)
@@ -237,5 +315,72 @@ public class World
                 return points;
             }
         }
+    }
+
+    /// <summary>
+    /// Helper method for determining if two rectangles overlap. Head is the beginning point, Tail is the end point, and
+    /// size is the radius.
+    /// </summary>
+    /// <param name="head1"></param>
+    /// <param name="tail1"></param>
+    /// <param name="size1"></param>
+    /// <param name="head2"></param>
+    /// <param name="tail2"></param>
+    /// <param name="size2"></param>
+    /// <returns></returns>
+    public static bool CollisionRectangle(Vector2D head1, Vector2D tail1, int size1, Vector2D head2, Vector2D tail2, int size2)
+    {
+        List<Vector2D> snakePoints = World.CalculatePoint(head1, tail1, size1);
+        List<Vector2D> rectanglePoints = World.CalculatePoint(head2, tail2, size2);
+
+        foreach (Vector2D point in snakePoints)
+        {
+            if (rectanglePoints[0].X <= point.X && point.X <= rectanglePoints[1].X)
+            {
+                if (rectanglePoints[0].Y <= point.Y && point.Y <= rectanglePoints[2].Y)
+                {
+                    return true;
+                }
+            }
+        }
+        foreach (Vector2D point in rectanglePoints)
+        {
+            if (snakePoints[0].X <= point.X && point.X <= snakePoints[1].X)
+            {
+                if (snakePoints[0].Y <= point.Y && point.Y <= snakePoints[2].Y)
+                {
+                    return true;
+                }
+            }
+        }
+        if (snakePoints[0].X >= rectanglePoints[0].X && snakePoints[0].X <= rectanglePoints[1].X && snakePoints[0].Y <= rectanglePoints[0].Y)
+        {
+            if (snakePoints[3].Y >= rectanglePoints[0].Y)
+            {
+                return true;
+            }
+        }
+        if (snakePoints[1].X >= rectanglePoints[0].X && snakePoints[1].X <= rectanglePoints[1].X && snakePoints[1].Y <= rectanglePoints[0].Y)
+        {
+            if (snakePoints[2].Y >= rectanglePoints[1].Y)
+            {
+                return true;
+            }
+        }
+        if (rectanglePoints[0].X >= snakePoints[0].X && rectanglePoints[0].X <= snakePoints[1].X && rectanglePoints[0].Y <= snakePoints[0].Y)
+        {
+            if (rectanglePoints[3].Y >= snakePoints[0].Y)
+            {
+                return true;
+            }
+        }
+        if (rectanglePoints[1].X >= snakePoints[0].X && rectanglePoints[1].X <= snakePoints[1].X && rectanglePoints[1].Y <= snakePoints[0].Y)
+        {
+            if (rectanglePoints[2].Y >= snakePoints[1].Y)
+            {
+                return true;
+            }
+        }
+        return false;
     }
 }

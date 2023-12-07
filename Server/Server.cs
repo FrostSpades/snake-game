@@ -9,7 +9,7 @@ public class Server
 {
 
     ServerController serverController;
-    World world;
+    //World world;
     public static void Main(string[] args)
     {
         Server server = new();
@@ -19,7 +19,7 @@ public class Server
     public Server()
     {
         serverController = new();
-        world = serverController.GetWorld();
+        //world = serverController.GetWorld();
         serverController.StartMainLoop();
     }
 }

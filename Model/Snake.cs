@@ -3,6 +3,7 @@
 // University of Utah
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Text.Json.Serialization;
@@ -41,6 +42,8 @@ namespace Model
         // and (item3, item4) are the coordinates of the end of the segment
         private List<Tuple<float, float, float, float>> segments;
 
+        private int worldSize;
+
         // The speed of the snake
         private int speed = 6;
         private int powerupFrames = 24;
@@ -78,8 +81,9 @@ namespace Model
             }
         }
 
-        public Snake(int id, string name, IEnumerable<Snake> snakes, IEnumerable<Wall> walls, IEnumerable<Powerup> powerups, string uLock, int worldSize, World world)
+        public Snake(int id, string name, int worldSize, World world)
         {
+            this.worldSize = worldSize;
             snake = id;
             this.name = name;
             this.world = world;
@@ -89,7 +93,7 @@ namespace Model
             dir = new();
             segments = new();
 
-            GenerateBody(snakes, walls, powerups, uLock, worldSize);
+            GenerateBody();
 
             currentRespawnFrames = 0;
             score = 0;
@@ -107,8 +111,11 @@ namespace Model
         /// <param name="powerups"></param>
         /// <param name="uLock"></param>
         /// <param name="worldSize"></param>
-        private void GenerateBody(IEnumerable<Snake> snakes, IEnumerable<Wall> walls, IEnumerable<Powerup> powerups, string uLock, int worldSize)
+        private void GenerateBody()
         {
+            IEnumerable<Snake> snakes = world!.GetSnakes();
+            IEnumerable<Wall> walls = world.GetWalls();
+            IEnumerable<Powerup> powerups = world.GetPowerups();
             // Initialize body and segments
             body = new();
             segments = new();
@@ -136,54 +143,58 @@ namespace Model
                     break;
             }
 
-            // Lock so that two snakes can't respawn at the same time
-            lock (uLock)
+
+            // Try to create snake. If fails, increment to the next square and retry
+            while (true)
             {
-                int sideLength = (worldSize - 240) / 120;
-                int numOfSquares = sideLength * sideLength;
 
-                // Generate a random 120 by 120 square
-                random = new Random();
-                int randomSquare = (int)Math.Floor(random.NextDouble() * numOfSquares);
+                int x = (int)(random.NextDouble() * (worldSize*.9)) + (int)(worldSize*.1) - (worldSize / 2);
+                int y = (int)(random.NextDouble() * (worldSize * .9)) + (int)(worldSize * .1) - (worldSize / 2);
 
 
-                // Try to create snake. If fails, increment to the next square and retry
-                while (true)
+                Vector2D head = new Vector2D(x, y);
+
+                // If there are collisions, continue loop
+                if (CheckForCollisionsBody(snakes, walls, powerups, head))
                 {
-                    int rowOffset = (120 * (randomSquare / sideLength) + 120) - (worldSize / 2);
-                    int colOffset = (120 * (randomSquare % sideLength) + 120) - (worldSize / 2);
-
-                    for (int i = 0; i < 120; i++)
-                    {
-                        for (int j = 0; j < 120; j++)
-                        {
-
-                            Vector2D head = new Vector2D(i + rowOffset, j +colOffset);
-
-                            // If there are collisions, continue loop
-                            if (CheckForCollisionsBody(snakes, walls, powerups, head))
-                            {
-                                continue;
-                            }
-
-                            // If successful, add the new body
-                            body.Add((new Vector2D(i + rowOffset, j + colOffset)) - (dir*120));
-                            body.Add(new Vector2D(i + rowOffset, j + colOffset));
-
-                            // Add all of the segments to the segments list
-                            for (int k = 0; k < body.Count - 1; k++)
-                            {
-                                segments.Add(new Tuple<float, float, float, float>((float)body[k].GetX(), (float)body[k].GetY(), (float)body[k + 1].GetX(), (float)body[k + 1].GetY()));
-                            }
-
-                            return;
-                        }
-                    }
-
-                    randomSquare = (randomSquare + 1) % numOfSquares;
+                    continue;
                 }
-            
+
+                // If successful, add the new body
+                body.Add((new Vector2D(x, y)) - (dir*120));
+                body.Add(new Vector2D(x, y));
+
+                // Add all of the segments to the segments list
+                for (int k = 0; k < body.Count - 1; k++)
+                {
+                    segments.Add(new Tuple<float, float, float, float>((float)body[k].GetX(), (float)body[k].GetY(), (float)body[k + 1].GetX(), (float)body[k + 1].GetY()));
+                }
+
+                return;
             }
+        }
+
+        /// <summary>
+        /// Returns the total length of the snake.
+        /// </summary>
+        /// <returns></returns>
+        private double GetLength()
+        {
+            double count = 0;
+
+            for (int i = 0; i < body.Count - 1; i++)
+            {
+                if (body[i].X == body[i+1].X)
+                {
+                    count += Math.Abs(body[i].Y - body[i + 1].Y);
+                }
+                if (body[i].Y == body[i+1].Y)
+                {
+                    count += Math.Abs(body[i].X - body[i + 1].X);
+                }
+            }
+
+            return count;
         }
 
         /// <summary>
@@ -196,27 +207,24 @@ namespace Model
         /// <returns></returns>
         private bool CheckForCollisions(IEnumerable<Snake> snakes, IEnumerable<Wall> walls, IEnumerable<Powerup> powerups, Vector2D head)
         {
-            lock (world!.GetSnakeLock())
+            // Check for wall collisions
+            foreach (Wall w in walls)
             {
-                // Check for wall collisions
-                foreach (Wall w in walls)
+                if (w.Collision(head, dir))
                 {
-                    if (w.Collision(head, dir))
-                    {
-                        return true;
-                    }
+                    return true;
                 }
-
-                // Check for snake collisions
-                foreach (Snake s in snakes)
-                {
-                    if (s.Collision(head, dir))
-                    {
-                        return true;
-                    }
-                }
-                return false;
             }
+
+            // Check for snake collisions
+            foreach (Snake s in snakes)
+            {
+                if (s.Collision(head, dir))
+                {
+                    return true;
+                }
+            }
+            return false;
             
         }
 
@@ -237,37 +245,35 @@ namespace Model
         }
         private bool CheckForCollisionsBody(IEnumerable<Snake> snakes, IEnumerable<Wall> walls, IEnumerable<Powerup> powerups, Vector2D head)
         {
-            lock (world!.GetSnakeLock())
+            // Check for wall collisions
+            foreach (Wall w in walls)
             {
-                // Check for wall collisions
-                foreach (Wall w in walls)
+                if (w.CollisionRectangle(head, (dir * -120) + head))
                 {
-                    if (w.CollisionRectangle(head, (dir * -120) + head))
-                    {
-                        return true;
-                    }
+                    return true;
                 }
-
-                // Check for snake collisions
-                foreach (Snake s in snakes)
-                {
-                    if (s.CollisionRectangle(head, (dir * -120) + head))
-                    {
-                        return true;
-                    }
-                }
-
-                // Check for powerup collisions
-                foreach (Powerup p in powerups)
-                {
-                    if (p.CollisionRectangle(head, (dir * -120) + head))
-                    {
-                        return true;
-                    }
-                }
-
-                return false;
             }
+
+            // Check for snake collisions
+            foreach (Snake s in snakes)
+            {
+                if (s.CollisionRectangle(head, (dir * -120) + head))
+                {
+                    return true;
+                }
+            }
+
+            // Check for powerup collisions
+            foreach (Powerup p in powerups)
+            {
+                if (p.CollisionRectangle(head, (dir * -120) + head))
+                {
+                    return true;
+                }
+            }
+
+            return false;
+            
         }
 
         public bool Collision(Vector2D head, Vector2D dir)
@@ -277,7 +283,7 @@ namespace Model
                 return false;
             }
 
-            Vector2D topOfHead = head + (dir * 10);
+            Vector2D topOfHead = head + (dir * 5);
 
             for (int i = 0; i < body.Count - 1; i++)
             {
@@ -341,41 +347,10 @@ namespace Model
 
             for (int i = 0; i < body.Count - 1; i++)
             {
-                List<Vector2D> snakePoints = World.CalculatePoint(head, tail, 5);
-                List<Vector2D> rectanglePoints = World.CalculatePoint(body[i], body[i+1], 5);
-                foreach (Vector2D point in snakePoints)
+                // Simulate collision between two rectangles
+                if (World.CollisionRectangle(head, tail, 5, body[i], body[i+1], 5))
                 {
-                    if (rectanglePoints[0].X < point.X && point.X < rectanglePoints[1].X)
-                    {
-                        if (rectanglePoints[0].Y < point.Y && point.Y < rectanglePoints[2].Y)
-                        {
-                            return true;
-                        }
-                    }
-                }
-                foreach (Vector2D point in rectanglePoints)
-                {
-                    if (snakePoints[0].X < point.X && point.X < snakePoints[1].X)
-                    {
-                        if (snakePoints[0].Y < point.Y && point.Y < snakePoints[2].Y)
-                        {
-                            return true;
-                        }
-                    }
-                }
-                if (snakePoints[0].X > rectanglePoints[0].X && snakePoints[0].X < rectanglePoints[1].X && snakePoints[0].Y < rectanglePoints[0].Y)
-                {
-                    if (snakePoints[3].Y > rectanglePoints[0].Y)
-                    {
-                        return true;
-                    }
-                }
-                if (rectanglePoints[0].X > snakePoints[0].X && rectanglePoints[0].X < snakePoints[1].X && rectanglePoints[0].Y < snakePoints[0].Y)
-                {
-                    if (rectanglePoints[3].Y > snakePoints[0].Y)
-                    {
-                        return true;
-                    }
+                    return true;
                 }
             }
 
@@ -494,7 +469,7 @@ namespace Model
                 currentRespawnFrames = 0;
                 alive = true;
 
-                GenerateBody(world.GetSnakes(), world.GetWalls(), world.GetPowerups(), world.GetSnakeLock(), world.GetWorldSize());
+                GenerateBody();
                 score = 0;
             }
         }
@@ -521,7 +496,20 @@ namespace Model
                 body[body.Count - 1] += (dir * speed);
             }
 
-            if (!eatenPowerup)
+            // If it has eaten a powerup and not in speed mode, don't move the tail
+            if (eatenPowerup)
+            {
+                currentPowerupFrames += 1;
+
+                if (currentPowerupFrames == powerupFrames)
+                {
+                    currentPowerupFrames = 0;
+                    eatenPowerup = false;
+                }
+            }
+
+            // Otherwise, move the tail
+            else
             {
                 Vector2D tail = body[0];
                 Vector2D afterTail = body[1];
@@ -542,8 +530,10 @@ namespace Model
                 }
             }
 
-            // If it has eaten a powerup, don't move the tail
-            else
+            
+
+            // If it has eaten a powerup and it is in speed mode, add to the currentPowerupFrames
+            if (world!.GetSpeedMode() && eatenPowerup)
             {
                 currentPowerupFrames += 1;
 
@@ -551,6 +541,7 @@ namespace Model
                 {
                     currentPowerupFrames = 0;
                     eatenPowerup = false;
+                    speed = 6;
                 }
             }
             
@@ -563,6 +554,7 @@ namespace Model
                 eatenPowerup = false;
                 score = 0;
                 currentPowerupFrames = 0;
+                speed = 6;
             }
 
             // If there is a powerup collision, set the eaten powerup field to true
@@ -571,6 +563,75 @@ namespace Model
                 eatenPowerup = true;
                 currentPowerupFrames = 0;
                 score += 1;
+
+                if (world.GetSpeedMode())
+                {
+                    speed = 12;
+                }
+            }
+
+            if (!(body[body.Count - 1].X > -(worldSize / 2)))
+            {
+                double c = GetLength();
+                double newY = body[body.Count - 1].Y;
+                double newX = body[body.Count - 1].X + worldSize;
+
+                double yTwo = body[body.Count - 1].Y;
+                double xTwo = body[body.Count - 1].X + worldSize + c;
+
+                body = new()
+                {
+                    new Vector2D(xTwo, yTwo),
+                    new Vector2D(newX, newY)
+                };
+            }
+
+            else if (!(body[body.Count - 1].X < (worldSize / 2)))
+            {
+                double c = GetLength();
+                double newY = body[body.Count - 1].Y;
+                double newX = body[body.Count - 1].X - worldSize;
+
+                double yTwo = body[body.Count - 1].Y;
+                double xTwo = body[body.Count - 1].X - worldSize - c;
+
+                body = new()
+                {
+                    new Vector2D(xTwo, yTwo),
+                    new Vector2D(newX, newY)
+                };
+            }
+
+            else if (!(body[body.Count - 1].Y > -(worldSize / 2)))
+            {
+                double c = GetLength();
+                double newY = body[body.Count - 1].Y + worldSize;
+                double newX = body[body.Count - 1].X;
+
+                double yTwo = body[body.Count - 1].Y + worldSize + c;
+                double xTwo = body[body.Count - 1].X;
+
+                body = new()
+                {
+                    new Vector2D(xTwo, yTwo),
+                    new Vector2D(newX, newY)
+                };
+            }
+
+            else if (!(body[body.Count - 1].Y < (worldSize / 2)))
+            {
+                double c = GetLength();
+                double newY = body[body.Count - 1].Y - worldSize;
+                double newX = body[body.Count - 1].X;
+
+                double yTwo = body[body.Count - 1].Y - worldSize - c;
+                double xTwo = body[body.Count - 1].X;
+
+                body = new()
+                {
+                    new Vector2D(xTwo, yTwo),
+                    new Vector2D(newX, newY)
+                };
             }
         }
     }
