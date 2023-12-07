@@ -1,10 +1,10 @@
 {
   "version": 2,
-  "dgSpecHash": "agTV8GvTcieIjgc6/AnSbjjhHEKtfV97Jdlh+rYQ5e0QHftVRJ6ipPx99OUBrdstupBnZTKsrC82PQ4qfBuzRg==",
+  "dgSpecHash": "Uh/gFgB6+TMZ1bLe8ERSUf0HiFD1DyirjTL+8oNo6ZIdMX1mPYejvfyqego4+DG4sfr9GmI05VT2txGXbtQrUw==",
   "success": true,
-  "projectFilePath": "C:\\Users\\mhgar\\Source\\Repos\\game-maryfrost_game\\GameController\\GameController.csproj",
+  "projectFilePath": "C:\\Users\\emand\\Source\\Repos\\game-maryfrost_game\\GameController\\GameController.csproj",
   "expectedPackageFiles": [
-    "C:\\Users\\mhgar\\.nuget\\packages\\newtonsoft.json\\13.0.3\\newtonsoft.json.13.0.3.nupkg.sha512"
+    "C:\\Users\\emand\\.nuget\\packages\\newtonsoft.json\\13.0.3\\newtonsoft.json.13.0.3.nupkg.sha512"
   ],
   "logs": []
 }

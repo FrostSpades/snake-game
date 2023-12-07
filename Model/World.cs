@@ -49,12 +49,14 @@ public class World
         powerupLock = "powerupLock";
 
         // Import GameSettings from settings.xml file
-        string filePath = "settings.xml";
+        string executablePath = AppDomain.CurrentDomain.BaseDirectory;
+        string projectRootPath = Directory.GetParent(executablePath)!.Parent!.Parent!.Parent!.Parent!.FullName;
+        string filePath = Path.Combine(projectRootPath, "settings.xml");
         GameSettings? tempSettings;
 
         DataContractSerializer ser = new(typeof(GameSettings));
 
-        XmlReader reader = XmlReader.Create("settings.xml");
+        XmlReader reader = XmlReader.Create(filePath);
         tempSettings = (GameSettings?)ser.ReadObject(reader);
 
         if (tempSettings == null )

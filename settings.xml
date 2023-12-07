@@ -1,6 +1,7 @@
 ﻿<GameSettings>
-  <MSPerFrame>1000</MSPerFrame>
+  <MSPerFrame>34</MSPerFrame>
   <RespawnRate>100</RespawnRate>
+  <SpeedMode>false</SpeedMode>
   <UniverseSize>2000</UniverseSize>
   <Walls>
     <Wall>
@@ -268,4 +269,5 @@
       </p2>
     </Wall>
   </Walls>
+  
 </GameSettings>
