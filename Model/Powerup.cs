@@ -36,6 +36,11 @@ namespace Model
             world = null;
         }
 
+        /// <summary>
+        /// Constructor for powerups.
+        /// </summary>
+        /// <param name="power"></param>
+        /// <param name="world"></param>
         public Powerup(int power, World world)
         {
             this.power = power;
@@ -46,10 +51,14 @@ namespace Model
             RandomLocation();
         }
 
+        /// <summary>
+        /// Assigns a new random location.
+        /// </summary>
         public void RandomLocation()
         {
             Random random = new Random();
 
+            // Try and find a random location, and don't stop until found.
             while (true)
             {
                 int x = (int)(random.NextDouble() * world!.GetWorldSize()) - (world.GetWorldSize() / 2);
@@ -68,6 +77,11 @@ namespace Model
             }
         }
 
+        /// <summary>
+        /// Method for checking if there was a collision.
+        /// </summary>
+        /// <param name="head"></param>
+        /// <returns></returns>
         private bool CheckForCollisionsBody(Vector2D head)
         {
             IEnumerable<Snake> snakes = world!.GetSnakes();
@@ -115,10 +129,17 @@ namespace Model
             return loc;
         }
 
+        /// <summary>
+        /// Simulates if a rectangle collides with the powerup object.
+        /// </summary>
+        /// <param name="head"></param>
+        /// <param name="tail"></param>
+        /// <returns></returns>
         public bool CollisionRectangle(Vector2D head, Vector2D tail)
         {
             List<Vector2D> pPoints = World.CalculatePoint(head, tail, 5);
 
+            // Create rectangle for the powerup
             Vector2D point1 = new Vector2D(loc);
             point1.X -= 5;
             point1.Y -= 5;
@@ -132,6 +153,7 @@ namespace Model
             point4.X -= 5;
             point4.Y += 5;
 
+            // Create the point list for the object
             List<Vector2D> rectanglePoints = new List<Vector2D>() {point1, point2, point3, point4};
 
             foreach (Vector2D point in pPoints)
@@ -144,6 +166,7 @@ namespace Model
                     }
                 }
             }
+
             foreach (Vector2D point in rectanglePoints)
             {
                 if (pPoints[0].X <= point.X && point.X <= pPoints[1].X)
@@ -154,6 +177,7 @@ namespace Model
                     }
                 }
             }
+
             if (pPoints[0].X >= rectanglePoints[0].X && pPoints[0].X <= rectanglePoints[1].X && pPoints[0].Y <= rectanglePoints[0].Y)
             {
                 if (pPoints[3].Y >= rectanglePoints[0].Y)
@@ -161,6 +185,7 @@ namespace Model
                     return true;
                 }
             }
+
             if (pPoints[1].X >= rectanglePoints[0].X && pPoints[1].X <= rectanglePoints[1].X && pPoints[1].Y <= rectanglePoints[0].Y)
             {
                 if (pPoints[2].Y >= rectanglePoints[1].Y)
@@ -168,6 +193,7 @@ namespace Model
                     return true;
                 }
             }
+
             if (rectanglePoints[0].X >= pPoints[0].X && rectanglePoints[0].X <= pPoints[1].X && rectanglePoints[0].Y <= pPoints[0].Y)
             {
                 if (rectanglePoints[3].Y >= pPoints[0].Y)
@@ -175,6 +201,7 @@ namespace Model
                     return true;
                 }
             }
+
             if (rectanglePoints[1].X >= pPoints[0].X && rectanglePoints[1].X <= pPoints[1].X && rectanglePoints[1].Y <= pPoints[0].Y)
             {
                 if (rectanglePoints[2].Y >= pPoints[1].Y)
@@ -182,6 +209,7 @@ namespace Model
                     return true;
                 }
             }
+
             return false;
         }
     }

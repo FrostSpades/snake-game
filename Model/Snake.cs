@@ -53,8 +53,19 @@ namespace Model
         private bool eatenPowerup;
         private int currentPowerupFrames;
 
+        /// <summary>
+        /// Constructor for json objects.
+        /// </summary>
+        /// <param name="snake"></param>
+        /// <param name="name"></param>
+        /// <param name="body"></param>
+        /// <param name="dir"></param>
+        /// <param name="score"></param>
+        /// <param name="died"></param>
+        /// <param name="alive"></param>
+        /// <param name="dc"></param>
+        /// <param name="join"></param>
         [JsonConstructor]
-        // Constructor for json objects
         public Snake(int snake, string name, List<Vector2D> body, Vector2D dir, int score, bool died, bool alive, bool dc, bool join)
         {
             this.snake = snake;
@@ -81,6 +92,13 @@ namespace Model
             }
         }
 
+        /// <summary>
+        /// Constructor for making snake objects.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="name"></param>
+        /// <param name="worldSize"></param>
+        /// <param name="world"></param>
         public Snake(int id, string name, int worldSize, World world)
         {
             this.worldSize = worldSize;
@@ -228,6 +246,11 @@ namespace Model
             
         }
 
+        /// <summary>
+        /// Checks if collisions happen with powerups.
+        /// </summary>
+        /// <param name="head"></param>
+        /// <returns></returns>
         private bool CollisionPowerup(Vector2D head)
         {
             IEnumerable<Powerup> powerups = world!.GetPowerups();
@@ -243,6 +266,15 @@ namespace Model
 
             return false;
         }
+
+        /// <summary>
+        /// Check for collisions when the body is generated.
+        /// </summary>
+        /// <param name="snakes"></param>
+        /// <param name="walls"></param>
+        /// <param name="powerups"></param>
+        /// <param name="head"></param>
+        /// <returns></returns>
         private bool CheckForCollisionsBody(IEnumerable<Snake> snakes, IEnumerable<Wall> walls, IEnumerable<Powerup> powerups, Vector2D head)
         {
             // Check for wall collisions
@@ -276,6 +308,12 @@ namespace Model
             
         }
 
+        /// <summary>
+        /// Collision method for determining if snake collides.
+        /// </summary>
+        /// <param name="head"></param>
+        /// <param name="dir"></param>
+        /// <returns></returns>
         public bool Collision(Vector2D head, Vector2D dir)
         {
             if (!alive)
@@ -283,8 +321,11 @@ namespace Model
                 return false;
             }
 
+            // Generate the head vector
             Vector2D topOfHead = head + (dir * 5);
 
+
+            // Check if there was a collision
             for (int i = 0; i < body.Count - 1; i++)
             {
                 if (body[i].X == body[i + 1].X)
@@ -338,6 +379,12 @@ namespace Model
             return false;
         }
 
+        /// <summary>
+        /// Collision method for determining if there was a collision. True if there was.
+        /// </summary>
+        /// <param name="head"></param>
+        /// <param name="tail"></param>
+        /// <returns></returns>
         public bool CollisionRectangle(Vector2D head, Vector2D tail)
         {
             if (!alive)
@@ -345,6 +392,7 @@ namespace Model
                 return false;
             }
 
+            // Check for each body segment
             for (int i = 0; i < body.Count - 1; i++)
             {
                 // Simulate collision between two rectangles
@@ -417,6 +465,10 @@ namespace Model
             }
         }
 
+        /// <summary>
+        /// Sets the direction. Don't set it if it interferes.
+        /// </summary>
+        /// <param name="dir"></param>
         public void SetDirection(string dir)
         {
             if (!alive)
@@ -428,6 +480,7 @@ namespace Model
                 return;
             }
 
+            // Get the normalized current direction
             Vector2D currentDirection = body[body.Count - 1] - body[body.Count - 2];
             currentDirection.Clamp();
 
@@ -460,10 +513,14 @@ namespace Model
             }
         }
 
+        /// <summary>
+        /// Add a frame to the number of dead frames.
+        /// </summary>
         public void AddDeadFrame()
         {
             currentRespawnFrames += 1;
 
+            // If the world respawn frames is equal to the set frames, respawn
             if (currentRespawnFrames == world!.GetRespawnFrames())
             {
                 currentRespawnFrames = 0;
@@ -570,6 +627,8 @@ namespace Model
                 }
             }
 
+            // This is the wraparound code.
+            // If you exceed the world borders, teleport to the other side
             if (!(body[body.Count - 1].X > -(worldSize / 2)))
             {
                 double c = GetLength();

@@ -1,4 +1,8 @@
-﻿using System;
+﻿// Settings for the snake game get stored in this class.
+// Authors: Ethan Andrews and Mary Garfield
+// Date: 12/6/2023
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
@@ -9,6 +13,9 @@ using System.Xml.Serialization;
 
 namespace Model;
 
+/// <summary>
+/// Class for storing the game settings for the snake server.
+/// </summary>
 [DataContract(Namespace="")]
 public class GameSettings
 {
@@ -23,6 +30,9 @@ public class GameSettings
     [DataMember]
     public bool SpeedMode;
 
+    /// <summary>
+    /// Default constructor.
+    /// </summary>
     public GameSettings()
     {
         MSPerFrame = 0;

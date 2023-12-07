@@ -1,4 +1,7 @@
-﻿using System;
+﻿// World model for the server class.
+// Authors: Ethan Andrews, and Mary Garfield
+
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -13,6 +16,10 @@ using NetworkUtil;
 using SnakeGame;
 
 namespace Model;
+
+/// <summary>
+/// World class for storing model objects.
+/// </summary>
 public class World
 {
     private GameSettings settings;
@@ -21,11 +28,18 @@ public class World
     private int uniqueSnakeID, uniquePowerupID;
     private string snakeLock, powerupLock;
 
+    // True if in speed mode
     private bool speedMode;
 
+    // Values for powerups
     private int maxPowerups = 20;
     private int maxPowerupFrames = 75;
     private int currentPowerupFrames, currentNeededPowerupFrames;
+
+    /// <summary>
+    /// Constructor for world object.
+    /// </summary>
+    /// <exception cref="FileNotFoundException"></exception>
     public World()
     {
         snakes = new Dictionary<SocketState, Snake>();
@@ -49,11 +63,15 @@ public class World
         }
 
         settings = tempSettings;
-
         speedMode = settings.SpeedMode;
         uniquePowerupID = 0;
     }
 
+    /// <summary>
+    /// Simulate snake movement
+    /// </summary>
+    /// <param name="dir"></param>
+    /// <param name="state"></param>
     public void Move(string dir, SocketState state)
     {
         lock (snakeLock)
@@ -62,16 +80,28 @@ public class World
         }
     }
 
+    /// <summary>
+    /// Returns the ms per frame
+    /// </summary>
+    /// <returns></returns>
     public int GetMSPerFrame()
     {
         return settings.MSPerFrame;
     }
 
+    /// <summary>
+    /// Returns the walls
+    /// </summary>
+    /// <returns></returns>
     public IEnumerable<Wall> GetWalls()
     {
         return settings.Walls;
     }
 
+    /// <summary>
+    /// Returns the snakes
+    /// </summary>
+    /// <returns></returns>
     public IEnumerable<Snake> GetSnakes()
     {
         lock (snakeLock)
@@ -80,6 +110,10 @@ public class World
         }
     }
 
+    /// <summary>
+    /// Returns the powerups
+    /// </summary>
+    /// <returns></returns>
     public IEnumerable<Powerup> GetPowerups()
     {
         lock (powerupLock)
@@ -88,11 +122,21 @@ public class World
         }
     }
 
+    /// <summary>
+    /// Returns if it is in speed mode. True if it is.
+    /// </summary>
+    /// <returns></returns>
     public bool GetSpeedMode()
     {
         return speedMode;
     }
 
+    /// <summary>
+    /// Adds a snake given a socket state. Socket state will be used as the id.
+    /// </summary>
+    /// <param name="name"></param>
+    /// <param name="id"></param>
+    /// <param name="state"></param>
     public void AddSnake(string name, int id, SocketState state)
     {
         lock (snakeLock)
@@ -102,8 +146,12 @@ public class World
         }
     }
 
+    /// <summary>
+    /// Update the objects in this model.
+    /// </summary>
     public void Update()
     {
+        // Update the snake values
         lock (snakeLock)
         {
             foreach (Snake s in snakes.Values)
@@ -118,6 +166,8 @@ public class World
                 }
             }
         }
+
+        // Update the powerup values
         lock (powerupLock)
         {
             if (powerups.Count < maxPowerups)
@@ -145,9 +195,15 @@ public class World
         }
     }
 
+    /// <summary>
+    /// Return the list of serialized objects
+    /// </summary>
+    /// <returns></returns>
     public List<string> GetSerializedObjects()
     {
         List<string> objects = new();
+
+        // Get snake strings
         lock (snakeLock)
         {
             foreach (Snake s in snakes.Values)
@@ -162,6 +218,7 @@ public class World
             }
         }
 
+        // Get powerup strings
         lock (powerupLock)
         {
             // List of powerups to remove
@@ -188,6 +245,11 @@ public class World
         return objects;
     }
 
+    /// <summary>
+    /// Disconnect the socket. Returns the disconnected snake to be sent.
+    /// </summary>
+    /// <param name="state"></param>
+    /// <returns></returns>
     public string Disconnect(SocketState state)
     {
         string s;
@@ -203,16 +265,19 @@ public class World
         return s;
     }
 
-    public string GetSnakeLock()
-    {
-        return snakeLock;
-    }
-
+    /// <summary>
+    /// Returns the world size.
+    /// </summary>
+    /// <returns></returns>
     public int GetWorldSize()
     {
         return settings.UniverseSize;
     }
 
+    /// <summary>
+    /// Returns a unique id.
+    /// </summary>
+    /// <returns></returns>
     public int GetUniqueID()
     {
         int id = uniqueSnakeID;
@@ -221,10 +286,20 @@ public class World
         return id;
     }
 
+    /// <summary>
+    /// Returns the respawn frames.
+    /// </summary>
+    /// <returns></returns>
     public int GetRespawnFrames()
     {
         return settings.RespawnRate;
     }
+
+    /// <summary>
+    /// Returns true if there is an associated snake with the socketstate.
+    /// </summary>
+    /// <param name="name"></param>
+    /// <returns></returns>
     public bool SnakeExists(SocketState name)
     {
         return snakes.ContainsKey(name);

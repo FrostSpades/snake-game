@@ -111,8 +111,15 @@ namespace Model
             return segments;
         }
 
+        /// <summary>
+        /// Simulate if there was a collision with this wall.
+        /// </summary>
+        /// <param name="head"></param>
+        /// <param name="dir"></param>
+        /// <returns></returns>
         public bool Collision(Vector2D head, Vector2D dir)
         {
+            // Generate snake head
             Vector2D topOfHead = head + (dir * 5);
 
             if (p1.X == p2.X)
@@ -164,6 +171,13 @@ namespace Model
 
             return false;
         }
+
+        /// <summary>
+        /// Simulates if a rectangle is colliding with this wall.
+        /// </summary>
+        /// <param name="head"></param>
+        /// <param name="tail"></param>
+        /// <returns></returns>
         public bool CollisionRectangle(Vector2D head, Vector2D tail)
         {
             // Simulate a collision between two rectangles

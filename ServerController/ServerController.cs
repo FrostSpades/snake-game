@@ -1,4 +1,8 @@
-﻿using Model;
+﻿// Controller for server application.
+// Authors: Ethan Andrews and Mary Garfield
+// Date: 12/6/2023
+
+using Model;
 using NetworkUtil;
 using System.Data;
 using System.Diagnostics;
@@ -10,6 +14,10 @@ using System.Text.RegularExpressions;
 using System.Diagnostics.Tracing;
 
 namespace ServerController;
+
+/// <summary>
+/// Server controller class for server application.
+/// </summary>
 public class ServerController
 {
     private World world;
@@ -24,6 +32,9 @@ public class ServerController
     private long totalMillisecondsElapsed;
     private int frameCount;
 
+    /// <summary>
+    /// Default constructor.
+    /// </summary>
     public ServerController()
     {
         world = new World();
@@ -46,11 +57,18 @@ public class ServerController
         StartServer();
     }
 
+    /// <summary>
+    /// Return the world.
+    /// </summary>
+    /// <returns></returns>
     public World GetWorld()
     {
         return world;
     }
 
+    /// <summary>
+    /// Start the server
+    /// </summary>
     public void StartServer()
     {
         Networking.StartServer(NewClientConnected, 11000);
@@ -58,6 +76,10 @@ public class ServerController
         Console.WriteLine("Server is running. Accepting clients.");
     }
 
+    /// <summary>
+    /// Called when server has connected to client.
+    /// </summary>
+    /// <param name="state"></param>
     public void NewClientConnected(SocketState state)
     {
         if (state.ErrorOccurred)
@@ -65,6 +87,7 @@ public class ServerController
             return;
         }
 
+        // Adds the state to the clients list
         lock(clients)
         {
             clients[state.ID] = state;
@@ -91,6 +114,11 @@ public class ServerController
 
         Networking.GetData(state);
     }
+
+    /// <summary>
+    /// Loop for receiving the name from the client.
+    /// </summary>
+    /// <param name="state"></param>
     private void ReceiveFirstMessage(SocketState state)
     {
         if(state.ErrorOccurred)
@@ -103,6 +131,11 @@ public class ServerController
 
         Networking.GetData(state);
     }
+
+    /// <summary>
+    /// Loop for receiving the name from the client. Also sets the name when received.
+    /// </summary>
+    /// <param name="state"></param>
     private void ReceiveMessage(SocketState state)
     {
         if (state.ErrorOccurred)
@@ -114,6 +147,11 @@ public class ServerController
         Networking.GetData(state);
     }
 
+    /// <summary>
+    /// Process the name being sent, and then
+    /// changes the method being called.
+    /// </summary>
+    /// <param name="state"></param>
     private void ProcessName(SocketState state) 
     {
         string totalData = state.GetData();
@@ -157,6 +195,11 @@ public class ServerController
             state.RemoveData(0, part.Length);
         }
     }
+
+    /// <summary>
+    /// Loop for processing general commands.
+    /// </summary>
+    /// <param name="state"></param>
     private void ProcessCommand(SocketState state)
     {
         string totalData = state.GetData();
@@ -226,6 +269,10 @@ public class ServerController
             state.RemoveData(0, p.Length);
         }
     }
+
+    /// <summary>
+    /// The main thread loop.
+    /// </summary>
     public void StartMainLoop()
     {
         Stopwatch stopwatch = new Stopwatch();
@@ -255,6 +302,10 @@ public class ServerController
         }
     }
 
+    /// <summary>
+    /// Removes client.
+    /// </summary>
+    /// <param name="state"></param>
     private void RemoveClient(SocketState state) 
     {
         Console.WriteLine("Client " + state.ID + " disconnected");
@@ -268,6 +319,9 @@ public class ServerController
         }
     }
 
+    /// <summary>
+    /// Update method for updating game objects.
+    /// </summary>
     private void Update()
     {
 
