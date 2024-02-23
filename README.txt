@@ -1,20 +1,20 @@
 Authors: Ethan Andrews and Mary Garfield
 Date: December 6th , 2023
 University of Utah
-Summary:  Server is the second half of a total Snake game. This project allows connections from multiple game clients and 
+Summary:  This project allows connections from multiple game clients and 
 manages the rules of the Snake game. Each player controls a snake that collects powerups to grow its length. Each snake is
-comprised of vertices that define axis-aligned segments. The player controls the snake by typing ‘w’ for up, ‘d’ for left, ‘a’ 
-for right, and ‘s’ for down into the text box to the right of the about button. The world contains walls and powerups, and the
-player’s snake dies when it hits a wall, another snake, or collides with itself. When the snake dies it is respawned in a random 
+comprised of vertices that define axis-aligned segments. The player controls the snake by typing â€˜wâ€™ for up, â€˜dâ€™ for left, â€˜aâ€™ 
+for right, and â€˜sâ€™ for down into the text box to the right of the about button. The world contains walls and powerups, and the
+playerâ€™s snake dies when it hits a wall, another snake, or collides with itself. When the snake dies it is respawned in a random 
 location that does not collide with any other object in the world. When a snake collides with a power up the snake will either grow, 
 or it will grow and become faster based on the game mode in the setting file which is <SpeedMode>. Each collision with a powerup
 increments the player's score. Each snake is always moving, and the snake's body follows along the same path as the segments 
-in front of it. When the snake reaches the world’s edge, it is teleported to the opposite edge and continues moving in the 
+in front of it. When the snake reaches the worldâ€™s edge, it is teleported to the opposite edge and continues moving in the 
 same orientation. New players can be added into the world at any time and existing players can respawn at any time. When a 
-client disconnects the server sends the ‘died’ version of the snake and indicates to the remaining clients that it has disconnected. 
+client disconnects the server sends the â€˜diedâ€™ version of the snake and indicates to the remaining clients that it has disconnected. 
 
 Design Decisions:
--For our extra game mode, we added functionality that makes the snake get faster when a powerup is collected AND the snake’s body grows. This game mode is enabled based on the game mode in the settings file. When <SpeedMode> is true it is in the special game mode, when <SpeedMode> is false, it is in basic game mode. 
+-For our extra game mode, we added functionality that makes the snake get faster when a powerup is collected AND the snakeâ€™s body grows. This game mode is enabled based on the game mode in the settings file. When <SpeedMode> is true it is in the special game mode, when <SpeedMode> is false, it is in basic game mode. 
 --Instead of using GameController we created a separate controller class for the Server. This is because the ServerController and 
 it would have gotten convoluted if placed into the same file. 
 
@@ -23,7 +23,7 @@ would have been very different from the structure of the Client Model. But they 
 such as Snake, Wall, and Powerup.
 
 --The View is just the entry point. This is because the Server does not have a set GUI just the console. The controller is responsible 
-for printing things to the console. It didn’t seem logical to create a separate View class for exclusively printing things to the 
+for printing things to the console. It didnâ€™t seem logical to create a separate View class for exclusively printing things to the 
 console. 
 
 
