@@ -27,13 +27,13 @@ using Microsoft.Maui.Graphics;
 /// </summary>
 public class WorldPanel : IDrawable
 {
-    private IImage wall;
-    private IImage background;
+    private IImage? wall;
+    private IImage? background;
 
     // Snake skeleton images
-    private IImage skeleHeadUp, skeleHeadDown, skeleHeadRight, skeleHeadLeft, skeleBodyUp, skeleBodyDown;
+    private IImage? skeleHeadUp, skeleHeadDown, skeleHeadRight, skeleHeadLeft, skeleBodyUp, skeleBodyDown;
     
-    private Model model;
+    private Model? model;
     private bool initializedForDrawing = false;
 
     /// <summary>
@@ -45,7 +45,7 @@ public class WorldPanel : IDrawable
     {
         Assembly assembly = GetType().GetTypeInfo().Assembly;
         string path = "SnakeClient.Resources.Images." + name;
-        using (Stream stream = assembly.GetManifestResourceStream(path))
+        using (Stream? stream = assembly.GetManifestResourceStream(path))
         {
 #if MACCATALYST
             return PlatformImage.FromStream(stream);
@@ -106,7 +106,7 @@ public class WorldPanel : IDrawable
         lock (model)
         {
             // Get the snake head location
-            Vector2D head;
+            Vector2D? head;
             head = model.GetHead();
 
             // Set the canvas to move with the head
